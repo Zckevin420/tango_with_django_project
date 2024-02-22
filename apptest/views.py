@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from .forms import *
@@ -29,8 +30,10 @@ def login(request):
 
             # If credentials are correct, log the user in
             auth_login(request, user)
-
-            return HttpResponse("Who the fuck are u?")
+            if user.usertype == 1:
+                return redirect(home)
+            else:
+                return HttpResponse('u r staff')
         else:
             print("user does not exist")
             # If credentials are not correct, return an error message
@@ -58,7 +61,7 @@ def register(request):
             else:
                 Users.objects.create_user(
                     username=username, email=email, password=password)
-                return redirect(login)
+                return redirect(registersuccess)
         # form = UserCreationForm(request.POST)
         # isexist = Users.objects.filter(email=request.POST.get('email'))
         # if isexist:
@@ -95,3 +98,14 @@ def register(request):
 
 # def login(request):
 #     return HttpResponse("Hello")
+@login_required
+def home(request):
+    return render(request, 'homePage.html')
+
+@login_required
+def logout(request):
+    auth_logout(request)
+    return redirect(login)
+
+def registersuccess(request):
+    return render(request, 'registerSuccessPage.html')

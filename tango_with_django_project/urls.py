@@ -24,6 +24,7 @@ urlpatterns = [
     #path('test-db/', test_db, name='test_db'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
-    # path('home', views.home, name='home')
+    path('home/', views.home, name='home'),
+    path('registersuccess/', views.registersuccess, name='registersuccess')
     # path('login/', templates.login, name='login'),
 ]

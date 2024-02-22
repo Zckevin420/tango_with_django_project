@@ -4,7 +4,7 @@ body, html {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
 }
-/* */
+
 .card {
     border-radius: 0.5rem;
 }
@@ -19,6 +19,76 @@ body, html {
 
 .mb-6 {
     margin-bottom: 4rem !important;
+}
+
+.container-fluid {
+  display: grid;
+  place-items: center; /* 这将水平和垂直居中所有的网格项 */
+  grid-template-columns: repeat(2, max-content); /* 这将创建两列，宽度由内容决定 */
+  gap: 1rem; /* 根据需要调整间隙 */
+}
+
+.home-button-container {
+    display: flex;
+    flex-direction: column; /* 设置为列布局 */
+    justify-content: center; /* 垂直居中 */
+    align-items: start; /* 水平居中 */
+    height: calc(100vh - 100px); /* 减去 header 和 footer 的高度 */
+    gap: 10px;
+}
+
+.home-button-container a {
+    width: 200px;
+    height: 200px;
+    background-color: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-button-images {
+    display: flex;
+    align-items: center; /* 保证子项在垂直方向上对齐 */
+    justify-content: center; /* 保证子项在水平方向上居中 */
+    gap: 20px; /* 根据需求调整子项之间的间隔 */
+}
+
+#icon {
+    border-radius: 50%;
+    display: block;
+    margin-right: auto;
+}
+
+#homeImages {
+    margin: 0; /* 移除外边距，让 flexbox 控制间隔 */
+}
+
+#homeImages .carousel-item {
+    height: 400px; /* 示例高度，根据实际情况调整 */
+    width: 400px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #0a3622;
+    color: #0a3622;
+}
+
+#homeImages .carousel-item img {
+    width: 100%;
+    height: auto;
+}
+
+.bi {
+  font-size: 1.5rem;
+  /*display: block; !* 这将确保图标在其容器中居中 *!*/
+}
+
+span {
+  text-align: center; /* 这将确保文本在其容器中居中 */
 }
 
 footer {
