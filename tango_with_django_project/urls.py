@@ -25,6 +25,10 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('home/', views.home, name='home'),
-    path('registersuccess/', views.registersuccess, name='registersuccess')
+    path('manager/', views.manager, name='manager'),
+    path('registersuccess/', views.registerSuccess, name='registersuccess'),
+    path('logout/', views.logout, name="logout"),
+    path('deleteuser/<userid>', views.deleteUser, name="deleteuser"),
+    path('updateuser/<int:userid>/', views.updateUser, name='updateuser'),
     # path('login/', templates.login, name='login'),
 ]

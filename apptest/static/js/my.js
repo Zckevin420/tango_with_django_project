@@ -27,3 +27,65 @@ function showMessage(msgText) {
     document.getElementById('tipmessage').innerHTML = msgText;
     setTimeout(closeMessage, datime);
 }
+
+function selectUser(element) {
+  // 移除之前选择的元素的类
+  document.querySelectorAll('.users-list li').forEach(li => {
+    li.classList.remove('selected');
+  });
+  // 为当前点击的元素添加类
+  element.classList.add('selected');
+}
+
+function confirmDelete(userid) {
+    var baseUrl = "/deleteuser/";
+    var deleteUrl = baseUrl + userid;
+    // print(deleteUrl)
+    var confirmAction = confirm("您确定要删除这个用户吗？");
+    if (confirmAction) {
+        // 用户点击了"OK"，进行删除操作
+        window.location.href = deleteUrl;
+    } else {
+        // 用户点击了"Cancel"，不做任何操作
+    }
+}
+
+function editUserProfile(userid) {
+
+}
+
+
+function openModal(userid, username, email) {
+    document.getElementById("modal_userid").value = userid;
+    document.getElementById("modal_username").value = username;
+    document.getElementById("modal_email").value = email;
+    document.getElementById("myModal").style.display = "block";
+}
+
+
+function closeModal() {
+    document.getElementById("myModal").style.display = "none";
+}
+
+function enableInput(inputId) {
+    document.getElementById(inputId).disabled = false;
+}
+
+function submitForm() {
+    var userid = document.getElementById("modal_userid").value; // 使用隐藏字段的值
+
+    // 使用 fetch API 提交表单数据
+    fetch(`/updateuser/${userid}/`, {
+        method: 'POST',
+        body: new FormData(document.getElementById('updateUserForm')),
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+    })
+    .then(response => {
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}

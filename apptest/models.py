@@ -32,8 +32,8 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(email, password, **extra_fields)
-class Users(AbstractBaseUser, PermissionsMixin):
-    userId = models.BigAutoField(primary_key=True)
+class Users(AbstractBaseUser):
+    userid = models.BigAutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
     # password = models.CharField(max_length=50)
     email = models.EmailField(max_length=50, unique=True)

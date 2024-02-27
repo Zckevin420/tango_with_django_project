@@ -18,35 +18,35 @@
             <img id="icon" src="{% static 'img/icon/icon.jpg' %}" alt="icon" width="40" height="40">
         </div>
     </header>
-    <div class="home-button-images">
+    <main class="home-button-images">
         <div class="home-button-container">
             <a href="" class="bi bi-person-circle">Profile</a>
             <a href="" class="bi bi-cart-fill">My Cart</a>
             <a href="" class="bi bi-search">Search items</a>
-            <a href="" class="bi bi-box-arrow-left">Logout</a>
+            <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
         </div>
-        <div id="homeImages" class="carousel slide" data-bs-ride="carousel" style="margin:auto" data-bs-interval="2000">
+        <div id="mainImages" class="carousel slide" data-bs-ride="carousel" style="width: 200px; margin:auto" data-bs-interval="2000">
             <div class="carousel-inner">
                 <div class="carousel-item">
-                    <img src="{% static 'img/icon/icon.jpg' %}" class="d-block" alt="image of icon">
+                    <img src="{% static 'img/icon/icon.jpg' %}" class="d-block img-large" alt="image of icon">
                 </div>
                 <div class="carousel-item active">
-                    <img src="{% static 'img/loginImages/f603d3c2a83438c95437f5d3f363dbc.jpg' %}" class="d-block" alt="image of 20">
+                    <img src="{% static 'img/loginImages/f603d3c2a83438c95437f5d3f363dbc.jpg' %}" class="d-block img-large" alt="image of 20">
                 </div>
                 <div class="carousel-item">
-                    <img src="{% static 'img/loginImages/59426a25d30d4e6a0a1f4ba55527693.jpg' %}" class="d-block" alt="image of 24">
+                    <img src="{% static 'img/loginImages/59426a25d30d4e6a0a1f4ba55527693.jpg' %}" class="d-block img-large" alt="image of 24">
                 </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#homeImages" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#mainImages" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#homeImages" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#mainImages" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-    </div>
+    </main>
     <footer class="footer mt-5 py-3 bg-white">
         <div class="container text-center">
             <span class="text-muted">© Our Website Name</span>

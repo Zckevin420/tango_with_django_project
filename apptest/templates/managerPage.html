@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="icon" href="{% static 'img/icon/icon.jpg' %}" type="image/x-icon">
+</head>
+<body>
+    <header class="p-3 bg-dark">
+        <div class="container">
+            <img id="icon" src="{% static 'img/icon/icon.jpg' %}" alt="icon" width="40" height="40">
+            <div>: hahah</div>
+        </div>
+    </header>
+    <div class="maindiv">
+        <div class="manager-button-container">
+            <a href="" class="bi bi-person-circle">Profile</a>
+            <a href="" class="bi bi-person-add">Add User</a>
+            <a href="" class="bi bi-database-add">Add item</a>
+            <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col" style="color: white">ID</th>
+                        <th scope="col" style="color: white">Username</th>
+                        <th scope="col" style="color: white">Email</th>
+                        <th scope="col" style="color: white">Last Login</th>
+                        <th scope="col" style="color: white">Operator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td style="color: white">{{ user.userid }}</td>
+                        <td style="color: white">{{ user.username }}</td>
+                        <td style="color: white">{{ user.email }}</td>
+                        <td style="color: white">{{ user.last_login }}</td>
+                        <td>
+                      <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
+                            <a href="javascript:void(0);" onclick="confirmDelete('{{ user.userid }}');" class="btn btn-danger">Delete</a>
+                            <a href="javascript:void(0);" onclick="openModal('{{ user.userid }}', '{{ user.username }}', '{{ user.email }}');" class="btn btn-primary">Edit</a>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                <div id="myModal" style="display:none;">
+                    <form id="updateUserForm">
+                        {% csrf_token %}
+                        <input type="hidden" id="modal_userid" name="userid">
+                        <div>
+                            <label for="username">Username:</label>
+                            <input type="text" id="modal_username" name="username" value="{{ user.username }}" disabled>
+                            <button type="button" onclick="enableInput('modal_username')">Edit</button>
+                        </div>
+
+                        <div>
+                            <label for="email">Email:</label>
+                            <input type="email" id="modal_email" name="email" value="{{ user.email }}" disabled>
+                            <button type="button" onclick="enableInput('modal_email')">Edit</button>
+                        </div>
+
+                        <button type="button" onclick="submitForm()">Save</button>
+                        <button type="button" onclick="closeModal()">Cancel</button>
+                    </form>
+                </div>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="footer mt-5 py-3 bg-white">
+        <div class="container text-center">
+            <span class="text-muted">© Our Website Name</span>
+        </div>
+    </footer>
+    <!--Bootstrap JavaScript-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/my.js' %}"></script>
+</body>
+</html>
