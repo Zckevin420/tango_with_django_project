@@ -30,5 +30,8 @@ urlpatterns = [
     path('logout/', views.logout, name="logout"),
     path('deleteuser/<userid>', views.deleteUser, name="deleteuser"),
     path('updateuser/<int:userid>/', views.updateUser, name='updateuser'),
+    path('deleteitem/<int:itemid>', views.deleteItem, name="deleteitem"),
+    path('updateitem/<int:itemid>/', views.updateItem, name='updateitem'),
+    path('add-item/', views.add_item, name='add_item'),
     # path('login/', templates.login, name='login'),
 ]

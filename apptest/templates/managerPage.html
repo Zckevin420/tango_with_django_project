@@ -21,8 +21,46 @@
     <div class="maindiv">
         <div class="manager-button-container">
             <a href="" class="bi bi-person-circle">Profile</a>
-            <a href="" class="bi bi-person-add">Add User</a>
-            <a href="" class="bi bi-database-add">Add item</a>
+
+            <a href="#" class="bi bi-database-add" data-bs-toggle="modal" data-bs-target="#addItemModal">Add item</a>
+
+                <!-- 模态框 -->
+                <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- 表单 -->
+                                <form id="addItemForm">
+                                    <div class="form-group">
+                                        <label for="itemname">Item Name</label>
+                                        <input type="text" class="form-control" id="itemname" name="itemname" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="price">Price</label>
+                                        <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="quantity">Quantity</label>
+                                        <input type="number" class="form-control" id="quantity" name="quantity" required>
+                                    </div>
+                                    <!-- CSRF Token -->
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="submitItemForm()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
         </div>
         <div class="table-responsive">
@@ -51,26 +89,81 @@
                         </td>
                     </tr>
                     {% endfor %}
-                <div id="myModal" style="display:none;">
-                    <form id="updateUserForm">
-                        {% csrf_token %}
-                        <input type="hidden" id="modal_userid" name="userid">
-                        <div>
-                            <label for="username">Username:</label>
-                            <input type="text" id="modal_username" name="username" value="{{ user.username }}" disabled>
-                            <button type="button" onclick="enableInput('modal_username')">Edit</button>
-                        </div>
+                    <div id="myModal" style="display:none;">
+                        <form id="updateUserForm">
+                            {% csrf_token %}
+                            <input type="hidden" id="modal_userid" name="userid">
+                            <div>
+                                <label for="username">Username:</label>
+                                <input type="text" id="modal_username" name="username" value="{{ user.username }}" disabled>
+                                <button type="button" onclick="enableInput('modal_username')">Edit</button>
+                            </div>
 
-                        <div>
-                            <label for="email">Email:</label>
-                            <input type="email" id="modal_email" name="email" value="{{ user.email }}" disabled>
-                            <button type="button" onclick="enableInput('modal_email')">Edit</button>
-                        </div>
+                            <div>
+                                <label for="email">Email:</label>
+                                <input type="email" id="modal_email" name="email" value="{{ user.email }}" disabled>
+                                <button type="button" onclick="enableInput('modal_email')">Edit</button>
+                            </div>
 
-                        <button type="button" onclick="submitForm()">Save</button>
-                        <button type="button" onclick="closeModal()">Cancel</button>
-                    </form>
-                </div>
+                            <button type="button" onclick="enableInputAndSubmitUser()">Save</button>
+                            <button type="button" onclick="closeModal()">Cancel</button>
+                        </form>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col" style="color: white">ID</th>
+                        <th scope="col" style="color: white">Good's name</th>
+                        <th scope="col" style="color: white">Price</th>
+                        <th scope="col" style="color: white">Num of stock</th>
+                        <th scope="col" style="color: white">Operator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td style="color: white">{{ item.itemid }}</td>
+                        <td style="color: white">{{ item.itemname }}</td>
+                        <td style="color: white">{{ item.price }}</td>
+                        <td style="color: white">{{ item.quantity }}</td>
+                        <td>
+                      <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
+                            <a href="javascript:void(0);" onclick="confirmDeleteItem('{{ item.itemid }}');" class="btn btn-danger">Delete</a>
+                            <a href="javascript:void(0);" onclick="openItem('{{ item.itemid }}', '{{ item.itemname }}', '{{ item.price }}', '{{ item.quantity }}');" class="btn btn-primary">Edit</a>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <div id="itemModal" style="display:none;">
+                        <form id="updateItemForm">
+                            {% csrf_token %}
+                            <input type="hidden" id="modal_itemid" name="itemid">
+                            <div>
+                                <label for="itemname">Item name:</label>
+                                <input type="text" id="modal_itemname" name="itemname" value="{{ item.itemname }}" disabled>
+                                <button type="button" onclick="enableInput('modal_itemname')">Edit</button>
+                            </div>
+
+                            <div>
+                                <label for="price">Price:</label>
+                                <input type="text" id="modal_price" name="price" value="{{ item.price }}" disabled>
+                                <button type="button" onclick="enableInput('modal_price')">Edit</button>
+                            </div>
+
+                            <div>
+                                <label for="quantity">Quantity:</label>
+                                <input type="text" id="modal_quantity" name="quantity" value="{{ item.quantity }}" disabled>
+                                <button type="button" onclick="enableInput('modal_quantity')">Edit</button>
+                            </div>
+
+                            <button type="button" onclick="enableInputAndSubmitItem()">Save</button>
+                            <button type="button" onclick="closeItem()">Cancel</button>
+                        </form>
+                    </div>
                 </tbody>
             </table>
         </div>
@@ -83,6 +176,7 @@
     </footer>
     <!--Bootstrap JavaScript-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="{% static 'js/my.js' %}"></script>
 </body>
 </html>

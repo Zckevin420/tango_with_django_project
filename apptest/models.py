@@ -50,6 +50,15 @@ class Users(AbstractBaseUser):
     class Meta:
         db_table = 'users'
 
+class Items(models.Model):
+    itemid = models.BigAutoField(primary_key=True)
+    itemname = models.CharField(max_length=50, unique=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.IntegerField()
+
+    class Meta:
+        db_table = 'items'
+
 
 
 

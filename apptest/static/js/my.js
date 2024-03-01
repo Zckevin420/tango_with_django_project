@@ -50,6 +50,19 @@ function confirmDelete(userid) {
     }
 }
 
+function confirmDeleteItem(itemid) {
+    var baseUrl = "/deleteitem/";
+    var deleteUrl = baseUrl + itemid;
+    // print(deleteUrl)
+    var confirmAction = confirm("您确定要删除这个用户吗？");
+    if (confirmAction) {
+        // 用户点击了"OK"，进行删除操作
+        window.location.href = deleteUrl;
+    } else {
+        // 用户点击了"Cancel"，不做任何操作
+    }
+}
+
 function editUserProfile(userid) {
 
 }
@@ -62,9 +75,21 @@ function openModal(userid, username, email) {
     document.getElementById("myModal").style.display = "block";
 }
 
+function openItem(itemid, itemname, price, quantity) {
+    document.getElementById("modal_itemid").value = itemid;
+    document.getElementById("modal_itemname").value = itemname;
+    document.getElementById("modal_price").value = price;
+    document.getElementById("modal_quantity").value = quantity;
+    document.getElementById("itemModal").style.display = "block";
+}
+
 
 function closeModal() {
     document.getElementById("myModal").style.display = "none";
+}
+
+function closeItem() {
+    document.getElementById("itemModal").style.display = "none";
 }
 
 function enableInput(inputId) {
@@ -84,6 +109,70 @@ function submitForm() {
     })
     .then(response => {
         window.location.reload();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function enableInputAndSubmitUser() {
+    document.getElementById('modal_username').disabled = false;
+    document.getElementById('modal_email').disabled = false;
+    submitForm(); // 然后调用 submitItem 函数
+}
+
+function submitItem() {
+    var itemid = document.getElementById("modal_itemid").value; // 使用隐藏字段的值
+
+    // 使用 fetch API 提交表单数据
+    fetch(`/updateitem/${itemid}/`, {
+        method: 'POST',
+        body: new FormData(document.getElementById('updateItemForm')),
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+    })
+    .then(response => {
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function enableInputAndSubmitItem() {
+    document.getElementById('modal_itemname').disabled = false;
+    document.getElementById('modal_price').disabled = false;
+    document.getElementById('modal_quantity').disabled = false;
+    submitItem(); // 然后调用 submitItem 函数
+}
+
+function submitItemForm() {
+    // 获取CSRF Token，假设你已经在模板中通过{% csrf_token %}渲染了它
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    // 获取表单数据
+    const form = document.getElementById('addItemForm');
+    const formData = new FormData(form);
+
+    fetch('/add-item/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': csrftoken, // 需要在请求头中包含CSRF token
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Network response was not ok.');
+    })
+    .then(data => {
+        console.log('Success:', data);
+        // 关闭模态框
+        document.getElementById('addItemModal').style.display = 'none';
+        // 这里可以添加一些操作，如刷新页面或显示消息
+        window.location.reload(); // 刷新页面
     })
     .catch((error) => {
         console.error('Error:', error);

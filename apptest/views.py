@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from .forms import *
 from .models import *
 from django.contrib import messages
-from .models import Users
+from .models import *
 from django.contrib.auth.models import User
 
 # def test_db(request):
@@ -106,7 +106,8 @@ def home(request):
 @login_required
 def manager(request):
     users = Users.objects.all()
-    return render(request, 'managerPage.html', {'users': users})
+    items = Items.objects.all()
+    return render(request, 'managerPage.html', {'users': users, 'items': items})
 
 @login_required
 def logout(request):
@@ -151,3 +152,48 @@ def updateUser(request, userid):
         # 重定向到某个页面，例如用户列表页面
         # return redirect(manager)
     # return JsonResponse({'status': 'error', 'message': 'wrong method'})
+
+@login_required
+def deleteItem(request, itemid):
+    item = Items.objects.get(itemid=itemid)
+    print(item)
+    item.delete()
+    return redirect(manager)
+
+@login_required
+def updateItem(request, itemid):
+    if request.method == 'POST':
+        item = get_object_or_404(Items, itemid=itemid)
+        itemname = request.POST.get('itemname')
+        price = request.POST.get('price')
+        quantity = request.POST.get('quantity')
+        itemname_exists = Items.objects.exclude(itemid=itemid).filter(itemname=itemname).exists()
+
+        if itemname_exists:
+            # 如果username或email已经存在，返回错误消息
+            error_message = "Username already exists."
+            return JsonResponse({'status': 'error', 'message': error_message})
+        else:
+            # 如果username和email都是唯一的，更新用户信息
+            item.itemname = itemname
+            item.price = price
+            item.quantity = quantity
+            item.save()
+            # 可以重定向到一个确认页面或者用户列表页面
+            return redirect('manager')  # 确保'manager'是你的URL名称
+
+    else:
+        # 如果请求方法不是POST，返回错误
+        return JsonResponse({'status': 'error', 'message': 'wrong method'})
+
+@login_required
+def add_item(request):
+    if request.method == 'POST':
+        itemname = request.POST.get('itemname')
+        price = request.POST.get('price')
+        quantity = request.POST.get('quantity')
+        # 创建并保存新项目
+        item = Items(itemname=itemname, price=price, quantity=quantity)
+        item.save()
+        return JsonResponse({"message": "Item added successfully"}, status=200)
+    return JsonResponse({"error": "Invalid request"}, status=400)
