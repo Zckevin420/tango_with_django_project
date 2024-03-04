@@ -1,12 +1,13 @@
+from decimal import Decimal
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, update_session_auth_hash
 from .forms import *
 from .models import *
 from django.contrib import messages
 from .models import *
-from django.contrib.auth.models import User
 
 # def test_db(request):
 #     objects = Users.objects.all()
@@ -18,30 +19,25 @@ from django.contrib.auth.models import User
 
 def login(request):
     if request.method == 'POST':
-        # Get the username and password from the POST request
         email = request.POST.get('email')
         password = request.POST.get('password')
-        print(email, password)
+        #print(email, password)
 
-        # Authenticate the user
         user = authenticate(request, email=email, password=password)
-        print(user)
+        #print(user)
         if user:
-            print("user exists")
+            #print("user exists")
 
-            # If credentials are correct, log the user in
             auth_login(request, user)
             if user.usertype == 1:
                 return redirect(home)
             else:
                 return redirect(manager)
         else:
-            print("user does not exist")
-            # If credentials are not correct, return an error message
+            #print("user does not exist")
             messages.error(request, "wrong password or email")
             return redirect(login)
 
-        # Render the login page with the form
     return render(request, 'loginPage.html', {})
 
 def register(request):
@@ -101,13 +97,40 @@ def register(request):
 #     return HttpResponse("Hello")
 @login_required
 def home(request):
-    return render(request, 'homePage.html')
+    # 假设你的用户模型是Users，并且你已经实现了用户认证
+    user = request.user
+    print(user.username, user.wallet)
+    try:
+        context = {
+            'username': user.username,
+            'wallet': user.wallet,
+        }
+    except Users.DoesNotExist:
+        context = {
+            'userid': None,
+            'wallet': None,
+        }
+    return render(request, 'homePage.html', context)
 
 @login_required
 def manager(request):
     users = Users.objects.all()
     items = Items.objects.all()
-    return render(request, 'managerPage.html', {'users': users, 'items': items})
+    user = request.user
+    print(user.username, user.wallet)
+    try:
+        context = {
+            'username': user.username,
+            'wallet': user.wallet,
+            'items': items,
+            'users': users,
+        }
+    except Users.DoesNotExist:
+        context = {
+            'userid': None,
+            'wallet': None,
+        }
+    return render(request, 'managerPage.html', context)
 
 @login_required
 def logout(request):
@@ -120,7 +143,7 @@ def registerSuccess(request):
 @login_required
 def deleteUser(request, userid):
     user = Users.objects.get(userid=userid)
-    print(user)
+    #print(user)
     user.delete()
     return redirect(manager)
 
@@ -156,7 +179,7 @@ def updateUser(request, userid):
 @login_required
 def deleteItem(request, itemid):
     item = Items.objects.get(itemid=itemid)
-    print(item)
+    #print(item)
     item.delete()
     return redirect(manager)
 
@@ -187,7 +210,7 @@ def updateItem(request, itemid):
         return JsonResponse({'status': 'error', 'message': 'wrong method'})
 
 @login_required
-def add_item(request):
+def additem(request):
     if request.method == 'POST':
         itemname = request.POST.get('itemname')
         price = request.POST.get('price')
@@ -197,3 +220,58 @@ def add_item(request):
         item.save()
         return JsonResponse({"message": "Item added successfully"}, status=200)
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+@login_required
+def updateProfileAndWallet(request):
+    if request.method == 'POST':
+        user = request.user
+        # 使用get方法从POST中获取username和email，如果不存在则使用当前值
+        username = request.POST.get('username', user.username)
+        email = request.POST.get('email', user.email)
+
+        # 更新用户名和邮箱
+        user.username = username
+        user.email = email
+
+        # 检查是否需要更新密码
+        new_password = request.POST.get('new_password')
+        if new_password:
+            user.set_password(new_password)
+            update_session_auth_hash(request, user)  # 更新session以防用户被登出
+
+        user.save()
+        return JsonResponse({"message": "Profile updated successfully"}, status=200)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+@login_required
+def verifyPassword(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        # print(old_password)
+        email = request.user.email
+        user = authenticate(email=email, password=old_password)
+        # print(user)
+        if user is not None:
+            # print("1")
+            return JsonResponse({'is_password_correct': True})
+        else:
+            # print("2")
+            return JsonResponse({'is_password_correct': False})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def topUp(request):
+    if request.method == 'POST':
+        user = request.user
+        add = request.POST.get('money')
+        if add:
+            user.wallet = user.wallet + Decimal(add)
+            user.save()
+            return JsonResponse({'message': 'Top-up successful'})
+        else:
+            return JsonResponse({'error': 'Invalid request'}, status=400)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+

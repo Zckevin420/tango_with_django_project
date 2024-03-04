@@ -10,41 +10,86 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" href="{% static 'img/icon/icon.jpg' %}" type="image/x-icon">
-
 </head>
 <body>
     <header class="p-3 bg-dark">
-        <div class="container">
+        <div class="container hello-wallet">
             <img id="icon" src="{% static 'img/icon/icon.jpg' %}" alt="icon" width="40" height="40">
+            <span class="text-white"> : Hello {{ username }}, your wallet is remaining ￡{{ wallet }}        </span>
+            <a href="#" class="btn btn-primary bi-currency-pound" data-bs-toggle="modal" data-bs-target="#topUp">Top-Up</a>
+                <div class="modal fade" id="topUp" tabindex="-1" aria-labelledby="topUpLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="topUpLabel">Enter the amount you want to add</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="topUpForm">
+                                    {% csrf_token %}
+                                    <label for="money">Amount of money</label>
+                                    <input type="number" class="form-control" id="money" name="money" step="0.01" required>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="submitTopUpForm()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
         </div>
     </header>
     <main class="home-button-images">
         <div class="home-button-container">
-            <a href="" class="bi bi-person-circle">Profile</a>
+            <a href="#" class="bi bi-person-circle" data-bs-toggle="modal" data-bs-target="#profileAndWallet">Profile</a>
+                <div class="modal fade" id="profileAndWallet" tabindex="-1" role="dialog" aria-labelledby="profileAndWalletLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="profileAndWalletLabel">Profile</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- 表单 -->
+                                <form id="profileAndWalletForm">
+                                    <!-- CSRF Token -->
+                                    {% csrf_token %}
+                                    <div>
+                                        <label for="username">Username: </label>
+                                        <input type="text" id="modal_username" name="username" value="{{ request.user.username }}" disabled>
+                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_username')">Edit</button>
+                                    </div>
+                                    <div>
+                                        <label for="email">Email:</label>
+                                        <input type="email" id="modal_email" name="email" value="{{ request.user.email }}" disabled>
+                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_email')">Edit</button>
+                                    </div>
+                                    <div>
+                                        <script type="text/javascript">
+                                            var csrftoken = '{{ csrf_token }}';
+                                        </script>
+                                        <label for="old_password">Old Password:</label>
+                                        <input type="password" id="old_password" name="old_password" required>
+                                        <button type="button" class="btn btn-primary" onclick="verifyOldPassword()">Confirm</button>
+                                    </div>
+                                    <div>
+                                        <label for="new_password">New Password:</label>
+                                        <input type="password" id="new_password" name="new_password" disabled required>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="profileAndWalletForm()">Save</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <a href="" class="bi bi-cart-fill">My Cart</a>
             <a href="" class="bi bi-search">Search items</a>
             <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
-        </div>
-        <div id="mainImages" class="carousel slide" data-bs-ride="carousel" style="width: 200px; margin:auto" data-bs-interval="2000">
-            <div class="carousel-inner">
-                <div class="carousel-item">
-                    <img src="{% static 'img/icon/icon.jpg' %}" class="d-block img-large" alt="image of icon">
-                </div>
-                <div class="carousel-item active">
-                    <img src="{% static 'img/loginImages/f603d3c2a83438c95437f5d3f363dbc.jpg' %}" class="d-block img-large" alt="image of 20">
-                </div>
-                <div class="carousel-item">
-                    <img src="{% static 'img/loginImages/59426a25d30d4e6a0a1f4ba55527693.jpg' %}" class="d-block img-large" alt="image of 24">
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#mainImages" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#mainImages" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
     </main>
     <footer class="footer mt-5 py-3 bg-white">

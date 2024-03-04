@@ -39,6 +39,7 @@ class Users(AbstractBaseUser):
     email = models.EmailField(max_length=50, unique=True)
     usertype = models.IntegerField(default=1, null=False)
     is_superuser = models.BooleanField(default=False)
+    wallet = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     #last_login = models.DateTimeField('last login', blank=True, null=True)
 

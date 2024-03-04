@@ -13,15 +13,57 @@
 </head>
 <body>
     <header class="p-3 bg-dark">
-        <div class="container">
+        <div class="container hello-wallet">
             <img id="icon" src="{% static 'img/icon/icon.jpg' %}" alt="icon" width="40" height="40">
-            <div>: hahah</div>
+            <span class="text-white"> : Hello {{ username }}</span>
         </div>
     </header>
     <div class="maindiv">
         <div class="manager-button-container">
-            <a href="" class="bi bi-person-circle">Profile</a>
-
+            <a href="#" class="bi bi-person-circle" data-bs-toggle="modal" data-bs-target="#profileAndWallet">Profile</a>
+                <div class="modal fade" id="profileAndWallet" tabindex="-1" role="dialog" aria-labelledby="profileAndWalletLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="profileAndWalletLabel">Profile</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- 表单 -->
+                                <form id="profileAndWalletForm">
+                                    <!-- CSRF Token -->
+                                    {% csrf_token %}
+                                    <div>
+                                        <label for="username">Username: </label>
+                                        <input type="text" id="modal_username" name="username" value="{{ request.user.username }}" disabled>
+                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_username')">Edit</button>
+                                    </div>
+                                    <div>
+                                        <label for="email">Email:</label>
+                                        <input type="email" id="modal_email" name="email" value="{{ request.user.email }}" disabled>
+                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_email')">Edit</button>
+                                    </div>
+                                    <div>
+                                        <script type="text/javascript">
+                                            var csrftoken = '{{ csrf_token }}';
+                                        </script>
+                                        <label for="old_password">Old Password:</label>
+                                        <input type="password" id="old_password" name="old_password" required>
+                                        <button type="button" class="btn btn-primary" onclick="verifyOldPassword()">Confirm</button>
+                                    </div>
+                                    <div>
+                                        <label for="new_password">New Password:</label>
+                                        <input type="password" id="new_password" name="new_password" disabled required>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="profileAndWalletForm()">Save</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <a href="#" class="bi bi-database-add" data-bs-toggle="modal" data-bs-target="#addItemModal">Add item</a>
 
                 <!-- 模态框 -->
@@ -94,7 +136,7 @@
                             {% csrf_token %}
                             <input type="hidden" id="modal_userid" name="userid">
                             <div>
-                                <label for="username">Username:</label>
+                                <label for="username">Username: </label>
                                 <input type="text" id="modal_username" name="username" value="{{ user.username }}" disabled>
                                 <button type="button" onclick="enableInput('modal_username')">Edit</button>
                             </div>

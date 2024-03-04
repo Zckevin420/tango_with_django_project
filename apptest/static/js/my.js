@@ -154,7 +154,7 @@ function submitItemForm() {
     const form = document.getElementById('addItemForm');
     const formData = new FormData(form);
 
-    fetch('/add-item/', {
+    fetch('/additem/', {
         method: 'POST',
         body: formData,
         headers: {
@@ -178,3 +178,82 @@ function submitItemForm() {
         console.error('Error:', error);
     });
 }
+
+function profileAndWalletForm() {
+    const formData = new FormData(document.getElementById('profileAndWalletForm'));
+    fetch('/updateprofileandwallet/', { // 替换为实际更新视图的URL
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Something went wrong');
+    })
+    .then(data => {
+        console.log('Success:', data);
+        window.location.reload(); // 刷新页面
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+
+function verifyOldPassword() {
+    const oldPassword = document.getElementById('old_password').value;
+    console.log(oldPassword);
+
+    // 创建一个 FormData 对象并添加旧密码
+    const formData = new FormData();
+    formData.append('old_password', oldPassword);
+
+    fetch('/verifypassword/', {
+        method: 'POST',
+        body: formData, // 发送 FormData 对象
+        headers: {
+            'X-CSRFToken': csrftoken, // 确保你有获取 csrftoken 的逻辑
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.is_password_correct) {
+            document.getElementById('new_password').disabled = false;
+        } else {
+            alert('Incorrect old password');
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function submitTopUpForm() {
+    const formData = new FormData(document.getElementById('topUpForm'));
+
+    fetch('/topup/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success: ', data);
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+

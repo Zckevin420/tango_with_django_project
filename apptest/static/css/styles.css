@@ -13,6 +13,12 @@ html {
     background-color: #f8f9fa;
 }
 
+.hello-wallet {
+    display: flex; /* 启用Flexbox布局 */
+    align-items: center; /* 垂直居中子项 */
+    /*gap: 1px; !* 子项之间的间距 *!*/
+}
+
 
 .card {
     border-radius: 0.5rem;
@@ -36,6 +42,16 @@ html {
   grid-template-columns: repeat(2, max-content); /* 这将创建两列，宽度由内容决定 */
   gap: 1rem; /* 根据需要调整间隙 */
 }
+
+.custom-button-container .custom-button {
+    /* 自定义样式 */
+    width: auto;
+    height: auto;
+    background-color: initial;
+    color: initial;
+    text-decoration: none; /* 或其他需要的样式 */
+}
+
 
 .home-button-container {
     display: flex;
@@ -68,7 +84,7 @@ html {
 #icon {
     border-radius: 50%;
     display: block;
-    margin-right: auto;
+    margin-right: 5px;
 }
 
 .carousel-control-prev-icon,
@@ -179,5 +195,8 @@ footer {
     width: 100%;
     text-align: center;
     padding: 20px;
-    height: 40px;
+    height: 60px;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
 }
