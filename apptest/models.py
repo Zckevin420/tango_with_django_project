@@ -61,5 +61,27 @@ class Items(models.Model):
         db_table = 'items'
 
 
+# Cart模型，与Users模型关联
+class Cart(models.Model):
+    user = models.OneToOneField(Users, on_delete=models.CASCADE, related_name='cart')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'cart'
+
+# CartItem模型，与Cart和Items模型关联
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    item = models.ForeignKey(Items, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        db_table = 'cartitem'
+
+    def get_total_price(self):
+        return self.quantity * self.item.price
+
+
 
 

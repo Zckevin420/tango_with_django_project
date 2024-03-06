@@ -24,6 +24,26 @@ html {
     border-radius: 0.5rem;
 }
 
+.main-container {
+    display: flex;
+    flex-direction: row; /* 确保内容水平排列 */
+    align-items: flex-start; /* 对齐项目的起始边 */
+    width: 100%;
+    margin: auto;
+    padding-top: 20px; /* 与顶端的间隔 */
+}
+
+.card-container {
+    flex: 3; /* 卡片容器宽度是按钮容器的三倍，根据需要调整 */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap; /* 允许卡片换行 */
+    align-content: flex-start; /* 从左侧开始排列卡片 */
+    gap: 10px; /* 卡片之间的间隙 */
+    max-height: 600px; /* 根据需要调整最大高度 */
+    overflow-y: auto; /* 启用垂直滚动 */
+}
+
 .rounded-4 {
     border-radius: 2.0rem !important;
 }
@@ -75,10 +95,12 @@ html {
 }
 
 .home-button-images {
+    flex: 1; /* 按钮容器可以根据需要调整宽度 */
     display: flex;
-    /*align-items: center; !* 保证子项在垂直方向上对齐 *!*/
-    /*justify-content: center; !* 保证子项在水平方向上居中 *!*/
-    gap: 20px; /* 根据需求调整子项之间的间隔 */
+    flex-direction: column;
+    align-items: center; /* 水平居中按钮 */
+    gap: 10px; /* 按钮之间的间隙 */
+    padding-right: 50px; /* 与卡片容器的间隔 */
 }
 
 #icon {

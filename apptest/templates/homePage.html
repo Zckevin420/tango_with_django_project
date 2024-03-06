@@ -38,60 +38,77 @@
                         </div>
                     </div>
                 </div>
-
         </div>
     </header>
-    <main class="home-button-images">
-        <div class="home-button-container">
-            <a href="#" class="bi bi-person-circle" data-bs-toggle="modal" data-bs-target="#profileAndWallet">Profile</a>
-                <div class="modal fade" id="profileAndWallet" tabindex="-1" role="dialog" aria-labelledby="profileAndWalletLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="profileAndWalletLabel">Profile</h5>
-                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <!-- 表单 -->
-                                <form id="profileAndWalletForm">
-                                    <!-- CSRF Token -->
-                                    {% csrf_token %}
-                                    <div>
-                                        <label for="username">Username: </label>
-                                        <input type="text" id="modal_username" name="username" value="{{ request.user.username }}" disabled>
-                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_username')">Edit</button>
-                                    </div>
-                                    <div>
-                                        <label for="email">Email:</label>
-                                        <input type="email" id="modal_email" name="email" value="{{ request.user.email }}" disabled>
-                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_email')">Edit</button>
-                                    </div>
-                                    <div>
-                                        <script type="text/javascript">
-                                            var csrftoken = '{{ csrf_token }}';
-                                        </script>
-                                        <label for="old_password">Old Password:</label>
-                                        <input type="password" id="old_password" name="old_password" required>
-                                        <button type="button" class="btn btn-primary" onclick="verifyOldPassword()">Confirm</button>
-                                    </div>
-                                    <div>
-                                        <label for="new_password">New Password:</label>
-                                        <input type="password" id="new_password" name="new_password" disabled required>
-                                    </div>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-primary" onclick="profileAndWalletForm()">Save</button>
-                                </form>
+    <div class="main-container">
+        <div class="home-button-images">
+            <div class="home-button-container">
+                <a href="#" class="bi bi-person-circle" data-bs-toggle="modal" data-bs-target="#profileAndWallet">Profile</a>
+                    <div class="modal fade" id="profileAndWallet" tabindex="-1" role="dialog" aria-labelledby="profileAndWalletLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="profileAndWalletLabel">Profile</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- 表单 -->
+                                    <form id="profileAndWalletForm">
+                                        <!-- CSRF Token -->
+                                        {% csrf_token %}
+                                        <div>
+                                            <label for="username">Username: </label>
+                                            <input type="text" id="modal_username" name="username" value="{{ request.user.username }}" disabled>
+                                            <button type="button" class="btn btn-primary" onclick="enableInput('modal_username')">Edit</button>
+                                        </div>
+                                        <div>
+                                            <label for="email">Email:</label>
+                                            <input type="email" id="modal_email" name="email" value="{{ request.user.email }}" disabled>
+                                            <button type="button" class="btn btn-primary" onclick="enableInput('modal_email')">Edit</button>
+                                        </div>
+                                        <div>
+                                            <script type="text/javascript">
+                                                var csrftoken = '{{ csrf_token }}';
+                                            </script>
+                                            <label for="old_password">Old Password:</label>
+                                            <input type="password" id="old_password" name="old_password" required>
+                                            <button type="button" class="btn btn-primary" onclick="verifyOldPassword()">Confirm</button>
+                                        </div>
+                                        <div>
+                                            <label for="new_password">New Password:</label>
+                                            <input type="password" id="new_password" name="new_password" disabled required>
+                                        </div>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-primary" onclick="profileAndWalletForm()">Save</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <a href="" class="bi bi-cart-fill">My Cart</a>
-            <a href="" class="bi bi-search">Search items</a>
-            <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
+                <a href="" class="bi bi-cart-fill">My Cart</a>
+                <a href="" class="bi bi-search">Search items</a>
+                <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
+            </div>
         </div>
-    </main>
+        <div class="card-container">
+        <!-- 商品卡片 -->
+            {% for item in items %}
+            <div class="card" style="width: 18rem; float: left; margin: 10px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">Price: ${{ item.price }}</p>
+                    <a href="{% url 'add_to_cart' item.id %}" class="btn btn-primary">Add to Cart</a>
+                    <a href="{% url 'direct_pay' item.id %}" class="btn btn-success">Pay Now</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No items found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
     <footer class="footer mt-5 py-3 bg-white">
         <div class="container text-center">
             <span class="text-muted">© Our Website Name</span>

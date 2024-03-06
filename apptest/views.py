@@ -274,4 +274,15 @@ def topUp(request):
             return JsonResponse({'error': 'Invalid request'}, status=400)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@login_required
+def add_to_cart(request, item_id):
+    item = get_object_or_404(Items, pk=item_id)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, item=item)
+    if not created:
+        cart_item.quantity += 1
+    cart_item.save()
+    messages.success(request, "Item added to cart!")
+    return redirect('item_list')  # Redirect to the page where the items are listed
+
 
