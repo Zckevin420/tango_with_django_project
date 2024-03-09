@@ -30,11 +30,15 @@ urlpatterns = [
     path('logout/', views.logout, name="logout"),
     path('deleteuser/<userid>', views.deleteUser, name='deleteuser'),
     path('updateuser/<int:userid>/', views.updateUser, name='updateuser'),
-    path('deleteitem/<int:itemid>', views.deleteItem, name='deleteitem'),
+    path('deleteitem/<int:itemid>/', views.deleteItem, name='deleteitem'),
     path('updateitem/<int:itemid>/', views.updateItem, name='updateitem'),
     path('additem/', views.additem, name='additem'),
     path('updateprofileandwallet/', views.updateProfileAndWallet, name='updateprofileandwallet'),
     path('verifypassword/', views.verifyPassword, name='verifypassword'),
     path('topup/', views.topUp, name='topup'),
+    path('searchitem/', views.searchItem, name='searchitem'),
+    path('addToCart/<int:itemid>/', views.addToCart, name='addtocart'),
+    path('cartItems/', views.cartItems, name='cartitems')
+    # path('search/', views.search, name='search'),
     # path('login/', templates.login, name='login'),
 ]

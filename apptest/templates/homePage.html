@@ -32,7 +32,7 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
                                 <button type="button" class="btn btn-primary" onclick="submitTopUpForm()">Save</button>
                             </div>
                         </div>
@@ -69,9 +69,7 @@
                                             <button type="button" class="btn btn-primary" onclick="enableInput('modal_email')">Edit</button>
                                         </div>
                                         <div>
-                                            <script type="text/javascript">
-                                                var csrftoken = '{{ csrf_token }}';
-                                            </script>
+
                                             <label for="old_password">Old Password:</label>
                                             <input type="password" id="old_password" name="old_password" required>
                                             <button type="button" class="btn btn-primary" onclick="verifyOldPassword()">Confirm</button>
@@ -87,24 +85,76 @@
                             </div>
                         </div>
                     </div>
-                <a href="" class="bi bi-cart-fill">My Cart</a>
-                <a href="" class="bi bi-search">Search items</a>
+                <!-- Modal Trigger -->
+                <a href="#" class="bi bi-cart-fill" data-bs-toggle="modal" data-bs-target="#cartModal">My Cart</a>
+                    <!-- Modal Structure -->
+                {% csrf_token %}
+                    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cartModalLabel">My Cart</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Items will be dynamically inserted here -->
+                                    <div id="cartItemsContainer">
+                                        <!-- Dynamic content goes here -->
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <h5 id="totalPrice">Total Price: £0</h5>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <a href="#" class="bi bi-search" data-bs-toggle="modal" data-bs-target="#searchItemModel">Search</a>
+                    {% csrf_token %}
+                    <div class="modal fade" id="searchItemModel" tabindex="-1" aria-labelledby="searchLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="searchLabel">Search the item</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="searchForm">
+                                        {% csrf_token %}
+                                        <label for="searchKeyword">Search by keyword</label>
+                                        <input type="text" class="form-control" id="searchKeyword" name="searchKeyword" step="0.01" required>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="submitSearchForm()">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
             </div>
         </div>
         <div class="card-container">
         <!-- 商品卡片 -->
             {% for item in items %}
-            <div class="card" style="width: 18rem; float: left; margin: 10px;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ item.name }}</h5>
-                    <p class="card-text">Price: ${{ item.price }}</p>
-                    <a href="{% url 'add_to_cart' item.id %}" class="btn btn-primary">Add to Cart</a>
-                    <a href="{% url 'direct_pay' item.id %}" class="btn btn-success">Pay Now</a>
+                {% csrf_token %}
+                <div class="card" style="width: 18rem; float: left; margin: 10px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.itemname }}</h5>
+                        <p class="card-text" id="price_{{ item.itemid }}">Price: £{{ item.price }}</p>
+                        <p class="card-text">Quantity: {{ item.quantity }}</p>
+                        <input type="number" class="form-control quantity-input" id="quantity_{{ item.itemid }}" name="numofitem_{{ item.itemid }}"
+                               step="1" value="1" min="1" required onchange="updatePrice('{{ item.itemid }}', '{{ item.price }}')">
+    {#                    <input type="number" class="form-control" id="numofitem" name="numofitem" step="1" value="1" required>#}
+    {#                    <p class="card-text" aria-hidden="true">{{ item.itemid }}</p>#}
+                        <button onclick="addToCart('{{ item.itemid }}')" class="btn btn-primary">Add to Cart</button>
+                        <a href="{# {% url 'direct_pay' item.itemid %} #}" class="btn btn-success">Pay Now</a>
+                    </div>
                 </div>
-            </div>
             {% empty %}
-            <p>No items found.</p>
+                <p>No items found.</p>
             {% endfor %}
         </div>
     </div>
@@ -117,5 +167,8 @@
     <!--Bootstrap JavaScript-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/my.js' %}"></script>
+    <script type="text/javascript">
+        var csrftoken = '{{ csrf_token }}';
+    </script>
 </body>
 </html>

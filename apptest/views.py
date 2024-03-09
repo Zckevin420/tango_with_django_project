@@ -5,9 +5,9 @@ from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, update_session_auth_hash
 from .forms import *
-from .models import *
 from django.contrib import messages
 from .models import *
+import json
 
 # def test_db(request):
 #     objects = Users.objects.all()
@@ -99,11 +99,14 @@ def register(request):
 def home(request):
     # 假设你的用户模型是Users，并且你已经实现了用户认证
     user = request.user
-    print(user.username, user.wallet)
+    items = Items.objects.all()  # 或者您的查询
+    # print(items)  # 打印查询结果，看是否如预期
+    # print(user.username, user.wallet)
     try:
         context = {
             'username': user.username,
             'wallet': user.wallet,
+            'items': items,
         }
     except Users.DoesNotExist:
         context = {
@@ -117,7 +120,7 @@ def manager(request):
     users = Users.objects.all()
     items = Items.objects.all()
     user = request.user
-    print(user.username, user.wallet)
+    # print(user.username, user.wallet)
     try:
         context = {
             'username': user.username,
@@ -275,14 +278,90 @@ def topUp(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @login_required
-def add_to_cart(request, item_id):
-    item = get_object_or_404(Items, pk=item_id)
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, item=item)
-    if not created:
-        cart_item.quantity += 1
-    cart_item.save()
-    messages.success(request, "Item added to cart!")
-    return redirect('item_list')  # Redirect to the page where the items are listed
+def addToCart(request, itemid):
+    print('1')
+    print(request.body)
+    print(request.method)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        numofitem = data.get('quantity', 1)
+        item = get_object_or_404(Items, pk=itemid)
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, item=item)
+
+        if not created:
+            cart_item.quantity += int(numofitem)
+        else:
+            cart_item.quantity = int(numofitem)
+
+        cart_item.save()
+        return JsonResponse({'message': 'Item added to cart successfully'})
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    # item = get_object_or_404(Items, pk=itemId)
+    # cart, created = Cart.objects.get_or_create(user=request.user)
+    # cart_item, created = CartItem.objects.get_or_create(cart=cart, item=item)
+    # if not created:
+    #     cart_item.quantity += int(quantity)
+    # cart_item.save()
+    # return JsonResponse({'message': 'Add to cart successful'})
+#    return redirect('homePage.html')  # Redirect to the page where the items are listed
+
+
+# @login_required
+# def search(request):
+#     #print(111111)
+#     if request.method == 'GET':
+#         keyword = request.GET.get('keyword')
+#     # 获取商品信息，这里假设您已经有了商品的数据
+#     items = Items.objects.all()
+#     #print(keyword)
+#     # items = [
+#     #     {'itemname': 'Item 1', 'price': 10, 'quantity': 5},
+#     #     {'itemname': 'Item 2', 'price': 20, 'quantity': 3},
+#     #     # 其他商品信息
+#     # ]
+#     if keyword:
+#         items = Items.objects.filter(itemname__icontains=keyword)
+#         #print(items)
+#         return render(request, 'homePage.html', {'items': items})
+#
+#     return render(request, 'homePage.html', {'items': items})
+
+@login_required
+def searchItem(request):
+    if request.method == 'POST':
+        search_keyword = request.POST.get('searchKeyword')
+        # print(search_keyword)
+        # 根据关键词搜索 Items 模型
+        if search_keyword:  # Ensure search_keyword is not None
+            items = Items.objects.filter(itemname__icontains=search_keyword)
+            items_data = list(items.values('itemid', 'itemname', 'price', 'quantity'))
+            # print(items_data)
+            return JsonResponse({'items': items_data})
+        else:
+            return JsonResponse({'error': 'No search keyword provided'}, status=400)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def cartItems(request):
+    if request.method == 'POST':
+        # print('1')
+        items = CartItem.objects.filter(cart__user=request.user).select_related('item')
+        items_data = []
+        total_price = 0
+        for item in items:
+            item_data = {
+                'itemname': item.item.itemname,
+                'quantity': item.quantity,
+                'price': float(item.item.price),
+                'total_item_price': float(item.get_total_price()),
+            }
+            # print(item_data)
+            items_data.append(item_data)
+            total_price += item.get_total_price()
+        return JsonResponse({'items': items_data, 'total_price': float(total_price)})
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 

@@ -12,6 +12,7 @@ var loginEmail = document.getElementById("email");
 var loginPassword = document.getElementById("password");
 var loginImages = ["20", "24"];
 */
+var csrftoken = '{{ csrf_token }}';
 function closeMessage() {
     document.getElementById('tipmessage').style.display = "none";
 }
@@ -41,7 +42,7 @@ function confirmDelete(userid) {
     var baseUrl = "/deleteuser/";
     var deleteUrl = baseUrl + userid;
     // print(deleteUrl)
-    var confirmAction = confirm("您确定要删除这个用户吗？");
+    var confirmAction = confirm("Are sure to delete the user");
     if (confirmAction) {
         // 用户点击了"OK"，进行删除操作
         window.location.href = deleteUrl;
@@ -54,7 +55,7 @@ function confirmDeleteItem(itemid) {
     var baseUrl = "/deleteitem/";
     var deleteUrl = baseUrl + itemid;
     // print(deleteUrl)
-    var confirmAction = confirm("您确定要删除这个用户吗？");
+    var confirmAction = confirm("Are sure to delete the item");
     if (confirmAction) {
         // 用户点击了"OK"，进行删除操作
         window.location.href = deleteUrl;
@@ -104,7 +105,7 @@ function submitForm() {
         method: 'POST',
         body: new FormData(document.getElementById('updateUserForm')),
         headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': csrftoken,
         },
     })
     .then(response => {
@@ -129,7 +130,7 @@ function submitItem() {
         method: 'POST',
         body: new FormData(document.getElementById('updateItemForm')),
         headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': csrftoken,
         },
     })
     .then(response => {
@@ -149,10 +150,9 @@ function enableInputAndSubmitItem() {
 
 function submitItemForm() {
     // 获取CSRF Token，假设你已经在模板中通过{% csrf_token %}渲染了它
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    // 获取表单数据
-    const form = document.getElementById('addItemForm');
-    const formData = new FormData(form);
+    // const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const formData = new FormData(document.getElementById('addItemForm'));
 
     fetch('/additem/', {
         method: 'POST',
@@ -185,7 +185,7 @@ function profileAndWalletForm() {
         method: 'POST',
         body: formData,
         headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'X-CSRFToken': csrftoken,
         },
     })
     .then(response => {
@@ -256,4 +256,133 @@ function submitTopUpForm() {
         console.error('Error:', error);
     });
 }
+
+function submitSearchForm() {
+    // 获取用户输入的搜索关键词
+    const searchKeyword = document.getElementById('searchKeyword').value;
+
+    // 创建 FormData 对象
+    const formData = new FormData();
+    formData.append('searchKeyword', searchKeyword);
+
+    // 发送 POST 请求到后端
+    fetch('/searchitem/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // 处理搜索结果
+        console.log('Search results:', data);
+        // 根据需要更新页面内容
+        updateItemsDisplay(data.items);
+        // 关闭模态框
+        var modalElement = document.getElementById('searchItemModel'); // 确保这里的 ID 与您模态框的 ID 一致
+        var modalInstance = bootstrap.Modal.getInstance(modalElement); // 获取模态框实例
+        modalInstance.hide(); // 关闭模态框
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function updateItemsDisplay(items) {
+    const container = document.querySelector('.card-container');
+    container.innerHTML = '';  // 清空现有的内容
+
+    // 为每个搜索结果创建一个新的卡片并添加到容器中
+    items.forEach(item => {
+        const card = `<div class="card" style="width: 18rem; float: left; margin: 10px;">
+            <div class="card-body">
+                <h5 class="card-title">${item.itemname}</h5>
+                <p class="card-text" id="price_${item.itemid}">Price: £${item.price}</p>
+                <p class="card-text">Quantity: ${item.quantity}</p>
+                <input type="number" class="form-control quantity-input" id="quantity_${item.itemid}" name="numofitem_${item.itemid}" 
+                        step="1" value="1" min="1" required onchange="updatePrice(${item.itemid}, ${item.price})">
+                <button onclick="addToCart('${item.itemid}')" class="btn btn-primary">Add to Cart</button>
+<!--                <a href="/direct_pay/${item.itemid}" class="btn btn-success" onclick="addToCart('{{ item.itemid }}')">Pay Now</a>-->
+            </div>
+        </div>`;
+        container.innerHTML += card;
+    });
+}
+
+function updatePrice(itemid, itemPrice) {
+    const quantityInput = document.getElementById(`quantity_${itemid}`).value;
+    const newPrice = itemPrice * quantityInput;
+    document.getElementById(`price_${itemid}`).innerText = `Price: £${newPrice.toFixed(2)}`;
+}
+
+function addToCart(itemid) {
+    const quantityInput = document.getElementById(`quantity_${itemid}`);
+    if (quantityInput) {
+        quantity = quantityInput.value;
+    }
+
+    fetch(`/addToCart/${itemid}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({ quantity: quantity })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Item added to cart successfully!');
+    })
+    .catch((error) => {
+        alert('Error adding item to cart. Please try again.');
+    });
+}
+
+document.body.addEventListener('click', function(event) {
+    if (event.target.matches('.bi-cart-fill')) {
+        updateCartModal();
+    }
+});
+
+
+
+
+function updateCartModal() {
+    console.log('Updating cart modal...');
+    fetch('/cartItems/', {
+        method: 'POST',
+        headers: {
+            // 'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        cartItemsContainer.innerHTML = ''; // 清除现有内容
+        data.items.forEach(item => {
+            // 创建卡片元素
+            let card = document.createElement('div');
+            card.className = 'card mb-3'; // 假设使用 Bootstrap 的卡片类
+            card.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${item.itemname}</h5>
+                    <p class="card-text">Quantity: ${item.quantity}</p>
+                    <p class="card-text">Price: £${item.price.toFixed(2)}</p>
+                    <p class="card-text">Total: £${item.total_item_price.toFixed(2)}</p>
+                </div>
+            `;
+            // 将卡片添加到容器中
+            cartItemsContainer.appendChild(card);
+        });
+        // 更新总价
+        document.getElementById('totalPrice').textContent = `Total Price: £${data.total_price.toFixed(2)}`;
+    })
+    .catch(error => {
+        console.error('Error fetching cart items:', error);
+    });
+}
+
+
+
+
 

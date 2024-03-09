@@ -211,6 +211,37 @@ span {
     border-radius: 0.4rem !important;
 }
 
+#cartItemsContainer .card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 20px;
+    background-color: #fff;
+}
+
+.card-title {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.card-text {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+#totalPrice {
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+}
+
+
 footer {
     position: absolute;
     bottom: 0;
@@ -222,3 +253,4 @@ footer {
     justify-content: center; /* 水平居中 */
     align-items: center; /* 垂直居中 */
 }
+
