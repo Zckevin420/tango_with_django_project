@@ -344,8 +344,6 @@ document.body.addEventListener('click', function(event) {
 });
 
 
-
-
 function updateCartModal() {
     console.log('Updating cart modal...');
     fetch('/cartItems/', {
@@ -362,7 +360,7 @@ function updateCartModal() {
         data.items.forEach(item => {
             // 创建卡片元素
             let card = document.createElement('div');
-            card.className = 'card mb-3'; // 假设使用 Bootstrap 的卡片类
+            card.className = 'card mb-3'; // 使用 Bootstrap 的卡片类
             card.innerHTML = `
                 <div class="card-body">
                     <h5 class="card-title">${item.itemname}</h5>
@@ -383,6 +381,69 @@ function updateCartModal() {
 }
 
 
+document.getElementById('payAll').addEventListener('click', function() {
+    console.log('in the js');
+    fetch('/payCart/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);  // 显示错误信息
+        } else {
+            alert('Payment completed successfully');
+            window.location.reload()
+            // 可以选择刷新页面或更新特定的页面元素以反映新的钱包余额和购物车状态
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
 
 
+function searchUser() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("userSearchBox");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("userstable");
+    tr = table.getElementsByTagName("tr");
 
+    // 遍历所有表格行，隐藏不匹配的行
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2]; // 选择包含 email 的列
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
+function searchItem() {
+    // 实现方法类似 searchUser()，但根据 itemname 进行过滤
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("itemSearchBox");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("itemstable");
+    tr = table.getElementsByTagName("tr");
+
+    // 遍历所有表格行，隐藏不匹配的行
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1]; // 选择包含 email 的列
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}

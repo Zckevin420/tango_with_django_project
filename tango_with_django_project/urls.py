@@ -38,7 +38,8 @@ urlpatterns = [
     path('topup/', views.topUp, name='topup'),
     path('searchitem/', views.searchItem, name='searchitem'),
     path('addToCart/<int:itemid>/', views.addToCart, name='addtocart'),
-    path('cartItems/', views.cartItems, name='cartitems')
+    path('cartItems/', views.cartItems, name='cartitems'),
+    path('payCart/', views.payCart, name='paycart'),
     # path('search/', views.search, name='search'),
     # path('login/', templates.login, name='login'),
 ]

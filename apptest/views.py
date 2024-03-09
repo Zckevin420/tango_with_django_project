@@ -365,3 +365,44 @@ def cartItems(request):
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
+# @login_required
+# def payDirect(request, payment):
+#     if request.method == 'POST':
+#
+#     else:
+#         return JsonResponse({'error': 'Invalid request'}, status=400)
+#
+
+
+@login_required
+def payCart(request):
+    if request.method == 'POST':
+        user = request.user
+        cart_items = CartItem.objects.filter(cart__user=user).select_related('item')
+        total_price = sum(item.quantity * item.item.price for item in cart_items)
+
+        # 检查库存
+        out_of_stock_items = [
+            item for item in cart_items if item.quantity > item.item.quantity
+        ]
+        if out_of_stock_items:
+            return JsonResponse({'error': 'Out of stock'}, status=400)
+
+        # 检查钱包余额
+        if user.wallet < total_price:
+            return JsonResponse({'error': 'Insufficient funds'}, status=400)
+
+        # 扣款并更新库存
+        user.wallet -= total_price
+        user.save()
+        for item in cart_items:
+            product = Items.objects.get(itemid=item.item.itemid)
+            product.quantity -= item.quantity
+            product.save()
+            item.delete()  # Optionally remove the item from the cart after purchase
+
+        return JsonResponse({'success': 'Payment completed successfully'})
+    else:
+        return JsonResponse({'error': 'invalid request'}, status=400)
+
+

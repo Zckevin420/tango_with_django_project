@@ -106,7 +106,11 @@
             <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
         </div>
         <div class="table-responsive">
-            <table class="table">
+            <div>
+                <input type="text" id="userSearchBox" placeholder="Search by email...">
+                <button onclick="searchUser()">Search</button>
+            </div>
+            <table class="table" id="userstable">
                 <thead>
                     <tr>
                         <th scope="col" style="color: white">ID</th>
@@ -155,7 +159,11 @@
             </table>
         </div>
         <div class="table-responsive">
-            <table class="table">
+            <div>
+                <input type="text" id="itemSearchBox" placeholder="Search by item name...">
+                <button onclick="searchItem()">Search</button>
+            </div>
+            <table class="table" id="itemstable">
                 <thead>
                     <tr>
                         <th scope="col" style="color: white">ID</th>
