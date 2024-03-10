@@ -457,16 +457,16 @@ def addressPage(request):
 
 @login_required
 def payTheBill(request):
-    print("in the payTheBill function")
+    # print("in the payTheBill function")
     if request.method == 'POST':
-        print('in the payTheBill function POST')
+        # print('in the payTheBill function POST')
         user = request.user
         price = Decimal(request.POST.get('price', '0'))
-        print(price)
+        # print(price)
 
 
         if user.wallet >= price:
-            print('in the payTheBill function POST wallet > price')
+            # print('in the payTheBill function POST wallet > price')
             user.wallet -= price
             user.save()
             return JsonResponse({'success': 'Payment completed successfully'})
