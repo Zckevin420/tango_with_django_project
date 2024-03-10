@@ -279,9 +279,9 @@ def topUp(request):
 
 @login_required
 def addToCart(request, itemid):
-    print('1')
-    print(request.body)
-    print(request.method)
+    # print('1')
+    # print(request.body)
+    # print(request.method)
     if request.method == 'POST':
         data = json.loads(request.body)
         numofitem = data.get('quantity', 1)
