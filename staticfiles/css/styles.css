@@ -1,0 +1,256 @@
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+html {
+    position: relative;
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.hello-wallet {
+    display: flex; /* 启用Flexbox布局 */
+    align-items: center; /* 垂直居中子项 */
+    /*gap: 1px; !* 子项之间的间距 *!*/
+}
+
+
+.card {
+    border-radius: 0.5rem;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row; /* 确保内容水平排列 */
+    align-items: flex-start; /* 对齐项目的起始边 */
+    width: 100%;
+    margin: auto;
+    padding-top: 20px; /* 与顶端的间隔 */
+}
+
+.card-container {
+    flex: 3; /* 卡片容器宽度是按钮容器的三倍，根据需要调整 */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap; /* 允许卡片换行 */
+    align-content: flex-start; /* 从左侧开始排列卡片 */
+    gap: 10px; /* 卡片之间的间隙 */
+    max-height: 600px; /* 根据需要调整最大高度 */
+    overflow-y: auto; /* 启用垂直滚动 */
+}
+
+.rounded-4 {
+    border-radius: 2.0rem !important;
+}
+
+.rounded-5 {
+    border-radius: 0.6rem !important;
+}
+
+.mb-6 {
+    margin-bottom: 4rem !important;
+}
+
+.container-fluid {
+  display: grid;
+  place-items: center; /* 这将水平和垂直居中所有的网格项 */
+  grid-template-columns: repeat(2, max-content); /* 这将创建两列，宽度由内容决定 */
+  gap: 1rem; /* 根据需要调整间隙 */
+}
+
+.custom-button-container .custom-button {
+    /* 自定义样式 */
+    width: auto;
+    height: auto;
+    background-color: initial;
+    color: initial;
+    text-decoration: none; /* 或其他需要的样式 */
+}
+
+
+.home-button-container {
+    display: flex;
+    flex-direction: column; /* 设置为列布局 */
+    justify-content: center; /* 垂直居中 */
+    align-items: start; /* 水平居中 */
+    height: calc(100vh - 100px); /* 减去 header 和 footer 的高度 */
+    gap: 10px;
+}
+
+.home-button-container a {
+    width: 200px;
+    height: 200px;
+    background-color: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-button-images {
+    flex: 1; /* 按钮容器可以根据需要调整宽度 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 水平居中按钮 */
+    gap: 10px; /* 按钮之间的间隙 */
+    padding-right: 50px; /* 与卡片容器的间隔 */
+}
+
+#icon {
+    border-radius: 50%;
+    display: block;
+    margin-right: 5px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #0a3622;
+    color: #0a3622;
+}
+
+/* 在您的 CSS 文件中 */
+.img-large {
+    width: 100%; /* 或您希望的任何宽度 */
+    height: auto; /* 保持图片的比例 */
+}
+
+.bi {
+    font-size: 1.5rem;
+    /*display: block; !* 这将确保图标在其容器中居中 *!*/
+}
+
+span {
+    text-align: center; /* 这将确保文本在其容器中居中 */
+}
+
+.maindiv {
+    display: flex;
+    flex-direction: row;
+    width: 95%;
+    margin: auto;
+    background: rgba(155, 155, 155, 0.9);
+    align-items: flex-start;
+}
+
+.manager-button-container {
+    display: flex;
+    flex: 0 0 200;
+    min-width: 150px;
+    flex-direction: column; /* 设置为列布局 */
+    justify-content: flex-start; /* 垂直居中 */
+    align-items: center; /* 水平居中 */
+    padding: 10px;
+    gap: 10px;
+}
+
+.manager-button-container a {
+    width: 200px;
+    height: 200px;
+    background-color: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table {
+    flex: 2;
+    width: 40%;
+    margin-bottom: 1rem;
+    margin-left: 20px; /* 为表格添加左侧间隔 */
+    max-width: calc(100% - 220px); /* 减去按钮容器的宽度和间隔 */
+    color: #212529;
+}
+
+.table th {
+    background-color: #2b3035;
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #4d5154;
+    white-space: nowrap;
+}
+
+.table-font {
+    color: white;
+}
+
+.table td {
+    background-color: #4d5154;
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #4d5154;
+    white-space: nowrap;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #2b3035; /* 保持背景颜色 */
+    z-index: 10; /* 确保表头在内容之上 */
+    border-top: none; /* 如果您不希望在粘性头部看到顶部边框 */
+}
+
+.table-responsive {
+    display: block;
+    width: 38%;
+    max-height: 900px; /* 或者您希望的任何最大高度 */
+    overflow-y: auto; /* 启用垂直滚动 */
+    overflow-x: hidden; /* 隐藏水平滚动，如果您不需要 */
+    border: 1px solid #ddd; /* 添加框 */
+    -webkit-overflow-scrolling: touch; /* 为触摸设备增加滚动动力学 */
+    margin-top: 10px;
+    border-radius: 0.4rem !important;
+}
+
+#cartItemsContainer .card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 20px;
+    background-color: #fff;
+}
+
+.card-title {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.card-text {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+#totalPrice {
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+}
+
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    height: 60px;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+}
+
