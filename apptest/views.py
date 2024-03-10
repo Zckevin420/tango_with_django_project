@@ -406,3 +406,60 @@ def payCart(request):
         return JsonResponse({'error': 'invalid request'}, status=400)
 
 
+@login_required
+def checkWallet(request):
+    if request.method == 'GET':
+        user = request.user
+        item_price = request.GET.get('price', None)
+
+        if item_price is None:
+            return JsonResponse({'error': 'invalid request'}, status=400)
+        try:
+            item_price = float(item_price)
+        except ValueError:
+            return JsonResponse({'error': 'invalid'}, status=400)
+
+        if user.wallet < item_price:
+            return JsonResponse({'can_afford': False})
+        else:
+            return JsonResponse({'can_afford': True})
+    else:
+        return JsonResponse({'error': 'invalid request'}, status=400)
+
+
+@login_required
+def addressPage(request):
+    price = request.GET.get('price', '0')
+    context = {
+        'price': price,
+        'username': request.user.username,
+        'wallet': request.user.wallet,  # 假设 wallet 是用户模型的一个属性
+    }
+    return render(request, 'address.html', context)
+
+@login_required
+def payTheBill(request):
+    print("in the payTheBill function")
+    if request.method == 'POST':
+        print('in the payTheBill function POST')
+        user = request.user
+        price = Decimal(request.POST.get('price', '0'))
+        print(price)
+
+
+        if user.wallet >= price:
+            print('in the payTheBill function POST wallet > price')
+            user.wallet -= price
+            user.save()
+            return JsonResponse({'success': 'Payment completed successfully'})
+        else:
+            return JsonResponse({'error': 'Not enough money'}, status=400)
+    else:
+        return JsonResponse({'error': 'invalid'})
+
+# @login_required
+# def payDirect(request):
+#     if request.method == 'POST':
+#         user = request.user
+#     else:
+#         return JsonResponse({'error': 'invalid request'}, status=400)

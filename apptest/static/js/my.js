@@ -380,6 +380,17 @@ function updateCartModal() {
     });
 }
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const payAllButton = document.getElementById('payAll');
+    if (payAllButton) {
+        payAllButton.addEventListener('click', function() {
+            const totalPriceElement = document.getElementById('totalPrice');
+            const totalPrice = totalPriceElement.textContent.replace('Total Price: £', '');
+            window.location.href = `/addressPage/?price=${totalPrice}`;
+        });
+    }
+});
+
 
 document.getElementById('payAll').addEventListener('click', function() {
     console.log('in the js');
@@ -446,4 +457,48 @@ function searchItem() {
             }
         }
     }
+}
+
+
+function checkWalletAndRedirect(price, itemid) {
+    const updatedPrice = document.getElementById(`price_${itemid}`).innerText.replace('Price: £', '')
+    fetch(`/checkWallet/?price=${price}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.can_afford) {
+            window.location.href = `/addressPage/?price=${updatedPrice}`;
+        } else {
+            alert(data.error);  // 显示错误信息
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function payTheBill() {
+    const formData = new FormData(document.getElementById('addressForm'));
+    fetch('/payTheBill/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/home/';
+        } else {
+            alert('Pay the bill failed: ' + data.error);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 }

@@ -40,6 +40,9 @@ urlpatterns = [
     path('addToCart/<int:itemid>/', views.addToCart, name='addtocart'),
     path('cartItems/', views.cartItems, name='cartitems'),
     path('payCart/', views.payCart, name='paycart'),
+    path('checkWallet/', views.checkWallet, name='checkwallet'),
+    path('payTheBill/', views.payTheBill, name='paythebill'),
+    path('addressPage/', views.addressPage, name='addresspage'),
     # path('search/', views.search, name='search'),
     # path('login/', templates.login, name='login'),
 ]
