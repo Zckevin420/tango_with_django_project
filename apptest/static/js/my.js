@@ -297,7 +297,7 @@ function updateItemsDisplay(items) {
             <div class="card-body">
                 <h5 class="card-title">${item.itemname}</h5>
                 <p class="card-text" id="price_${item.itemid}">Price: £${item.price}</p>
-                <p class="card-text">Quantity: ${item.quantity}</p>
+<!--                <p class="card-text">Quantity: ${item.quantity}</p>-->
                 <input type="number" class="form-control quantity-input" id="quantity_${item.itemid}" name="numofitem_${item.itemid}" 
                         step="1" value="1" min="1" required onchange="updatePrice(${item.itemid}, ${item.price})">
                 <button onclick="addToCart('${item.itemid}')" class="btn btn-primary">Add to Cart</button>
@@ -337,19 +337,32 @@ function addToCart(itemid) {
     });
 }
 
-document.body.addEventListener('click', function(event) {
-    if (event.target.matches('.bi-cart-fill')) {
-        updateCartModal();
-    }
-});
+// 定义一个函数来发送删除购物车商品的请求
+function removeFromCart(itemid) {
+    fetch(`/removeFromCart/${itemid}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            updateCartModal();  // 重新加载购物车模态框以显示最新状态
+        } else {
+            alert('Failed to remove item from cart.');
+        }
+    })
+    .catch(error => {
+        console.error('Error removing item from cart:', error);
+    });
+}
 
-
+// 更新购物车模态框的函数
 function updateCartModal() {
     console.log('Updating cart modal...');
     fetch('/cartItems/', {
         method: 'POST',
         headers: {
-            // 'Content-Type': 'application/json',
             'X-CSRFToken': csrftoken,
         },
     })
@@ -364,9 +377,11 @@ function updateCartModal() {
             card.innerHTML = `
                 <div class="card-body">
                     <h5 class="card-title">${item.itemname}</h5>
+                    <p class="card-text">ID: ${item.itemid}</p>
                     <p class="card-text">Quantity: ${item.quantity}</p>
                     <p class="card-text">Price: £${item.price.toFixed(2)}</p>
                     <p class="card-text">Total: £${item.total_item_price.toFixed(2)}</p>
+                    <button class="btn btn-danger remove-item" data-itemid="${item.itemid}">Remove</button>
                 </div>
             `;
             // 将卡片添加到容器中
@@ -374,10 +389,48 @@ function updateCartModal() {
         });
         // 更新总价
         document.getElementById('totalPrice').textContent = `Total Price: £${data.total_price.toFixed(2)}`;
+
+        // 给每个"Remove"按钮添加点击事件监听器
+        document.querySelectorAll('.remove-item').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-itemid');
+                removeFromCart(itemId);  // 调用删除购物车商品的函数
+            });
+        });
     })
     .catch(error => {
         console.error('Error fetching cart items:', error);
     });
+}
+
+
+// 使用事件委托监听 .bi-cart-fill 元素的点击事件
+document.body.addEventListener('click', function(event) {
+    if (event.target.matches('.bi-cart-fill')) {
+        updateCartModal();
+    }
+});
+
+// $('#cartModal').on('shown.bs.modal', function () {
+//     const payAllButton = document.getElementById('payAll');
+//     if (payAllButton) {
+//         payAllButton.removeEventListener('click', payAllHandler); // 防止重复添加事件处理器
+//         payAllButton.addEventListener('click', payAllHandler);
+//     } else {
+//         console.error('Element with id `payAll` was not found.');
+//     }
+// });
+
+function payAllHandler() {
+    console.log('Pay All button clicked');
+    // 假设 totalPriceElement 包含了购物车的总价
+    const totalPriceElement = document.getElementById('totalPrice');
+    const totalPriceText = totalPriceElement.textContent || totalPriceElement.innerText;
+    const totalPrice = totalPriceText.replace('Total Price: £', '');
+
+    // 这里使用了 `checkWalletAndRedirect` 函数来检查钱包余额并可能重定向到支付页面
+    // 确保这个函数定义了并且可用
+    checkWalletAndRedirect(totalPrice, ''); // 如果 itemid 不重要，可以传空字符串或适当的值
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -390,31 +443,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 });
-
-
-document.getElementById('payAll').addEventListener('click', function() {
-    console.log('in the js');
-    fetch('/payCart/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrftoken,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(data.error);  // 显示错误信息
-        } else {
-            alert('Payment completed successfully');
-            window.location.reload()
-            // 可以选择刷新页面或更新特定的页面元素以反映新的钱包余额和购物车状态
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-});
-
 
 function searchUser() {
     var input, filter, table, tr, td, i, txtValue;

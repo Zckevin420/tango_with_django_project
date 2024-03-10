@@ -353,6 +353,7 @@ def cartItems(request):
         for item in items:
             item_data = {
                 'itemname': item.item.itemname,
+                'itemid': item.item.itemid,
                 'quantity': item.quantity,
                 'price': float(item.item.price),
                 'total_item_price': float(item.get_total_price()),
@@ -364,6 +365,23 @@ def cartItems(request):
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
+
+@login_required
+def removeFromCart(request, itemid):
+    # 确保只处理POST请求
+    if request.method == 'POST':
+        user = request.user
+        try:
+            # 根据当前用户和商品ID找到CartItem实例
+            cart_item = CartItem.objects.get(cart__user=user, item__itemid=itemid)
+            cart_item.delete()  # 删除该CartItem实例
+            return JsonResponse({'success': 'Item removed successfully'})
+        except CartItem.DoesNotExist:
+            return JsonResponse({'error': 'Item not found in cart'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # @login_required
 # def payDirect(request, payment):

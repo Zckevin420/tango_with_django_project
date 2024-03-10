@@ -43,6 +43,7 @@ urlpatterns = [
     path('checkWallet/', views.checkWallet, name='checkwallet'),
     path('payTheBill/', views.payTheBill, name='paythebill'),
     path('addressPage/', views.addressPage, name='addresspage'),
+    path('removeFromCart/<int:itemid>/', views.removeFromCart, name='removefromcart')
     # path('search/', views.search, name='search'),
     # path('login/', templates.login, name='login'),
 ]

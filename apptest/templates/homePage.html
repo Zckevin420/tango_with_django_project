@@ -88,8 +88,9 @@
                     </div>
                 <!-- Modal Trigger -->
                 <a href="#" class="bi bi-cart-fill" data-bs-toggle="modal" data-bs-target="#cartModal">My Cart</a>
+
                     <!-- Modal Structure -->
-                {% csrf_token %}
+                    {% csrf_token %}
                     <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
 
                         <div class="modal-dialog">
@@ -146,11 +147,9 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ item.itemname }}</h5>
                         <p class="card-text" id="price_{{ item.itemid }}">Price: £{{ item.price }}</p>
-                        <p class="card-text">Quantity: {{ item.quantity }}</p>
+{#                        <p class="card-text">Quantity: {{ item.quantity }}</p>#}
                         <input type="number" class="form-control quantity-input" id="quantity_{{ item.itemid }}" name="numofitem_{{ item.itemid }}"
                                step="1" value="1" min="1" required onchange="updatePrice('{{ item.itemid }}', '{{ item.price }}')">
-    {#                    <input type="number" class="form-control" id="numofitem" name="numofitem" step="1" value="1" required>#}
-    {#                    <p class="card-text" aria-hidden="true">{{ item.itemid }}</p>#}
                         <button onclick="addToCart('{{ item.itemid }}')" class="btn btn-primary">Add to Cart</button>
                         <button onclick="checkWalletAndRedirect({{ item.price }}, '{{ item.itemid }}', this)"
                                 data-item-price="{{ item.price }}" class="btn btn-success">Pay Now</button>
@@ -168,10 +167,42 @@
         </div>
     </footer>
     <!--Bootstrap JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/my.js' %}"></script>
     <script type="text/javascript">
         var csrftoken = '{{ csrf_token }}';
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const payAllButton = document.getElementById('payAll');
+            if (payAllButton) {
+                payAllButton.addEventListener('click', function() {
+                    console.log('in the js');
+                    fetch('/payCart/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);  // 显示错误信息
+                        } else {
+                            alert('Payment completed successfully');
+                            window.location.reload();
+                            // 可以选择刷新页面或更新特定的页面元素以反映新的钱包余额和购物车状态
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            } else {
+                console.error('Element with id `payAll` was not found.');
+            }
+        });
     </script>
 </body>
 </html>
