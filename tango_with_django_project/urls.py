@@ -22,7 +22,7 @@ from apptest import views
 
 urlpatterns = [
     #path('test-db/', test_db, name='test_db'),
-    path('', views.login, name='login'),
+    path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('home/', views.home, name='home'),
     path('manager/', views.manager, name='manager'),
