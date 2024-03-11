@@ -558,6 +558,7 @@ function payTheBill() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            alert('Payment successful!');
             window.location.href = '/home/';
         } else {
             alert('Pay the bill failed: ' + data.error);
