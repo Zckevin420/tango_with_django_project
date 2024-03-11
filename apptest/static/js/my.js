@@ -13,6 +13,7 @@ var loginPassword = document.getElementById("password");
 var loginImages = ["20", "24"];
 */
 var csrftoken = '{{ csrf_token }}';
+
 function closeMessage() {
     document.getElementById('tipmessage').style.display = "none";
 }
@@ -22,7 +23,7 @@ function showMessage(msgText) {
 
     if (msgText == 'pw') {
         msgText = '<ul><li>Your password can\'t be too similar to your other personal information.</li><li>Your password must contain at least 8 characters.</li><li>Your password can\'t be a commonly used password.</li><li>Your password can\'t be entirely numeric.</li></ul>';
-        datime = 10000
+        datime = 200000
     }
     document.getElementById('tipmessage').style.display = "block";
     document.getElementById('tipmessage').innerHTML = msgText;
@@ -168,7 +169,7 @@ function submitItemForm() {
         throw new Error('Network response was not ok.');
     })
     .then(data => {
-        console.log('Success:', data);
+        // console.log('Success:', data);
         // 关闭模态框
         document.getElementById('addItemModal').style.display = 'none';
         // 这里可以添加一些操作，如刷新页面或显示消息
@@ -379,13 +380,18 @@ function updateCartModal() {
                     <h5 class="card-title">${item.itemname}</h5>
                     <p class="card-text">ID: ${item.itemid}</p>
                     <p class="card-text">Quantity: ${item.quantity}</p>
-                    <p class="card-text">Price: £${item.price.toFixed(2)}</p>
-                    <p class="card-text">Total: £${item.total_item_price.toFixed(2)}</p>
+                    <p class="card-text" id="price_${item.itemid}">Price: £${item.price.toFixed(2)}</p>
                     <button class="btn btn-danger remove-item" data-itemid="${item.itemid}">Remove</button>
+                    <input type="hidden" name="item_id[]" value="${item.itemid}">
+                    <input type="hidden" name="quantity[]" value="${item.quantity}">
+                    <input type="hidden" name="price[]" value="${item.price}">
                 </div>
             `;
             // 将卡片添加到容器中
             cartItemsContainer.appendChild(card);
+
+            // 使用 updatePrice 函数更新价格
+            updatePrice(item.itemid, item.price);
         });
         // 更新总价
         document.getElementById('totalPrice').textContent = `Total Price: £${data.total_price.toFixed(2)}`;
@@ -402,6 +408,7 @@ function updateCartModal() {
         console.error('Error fetching cart items:', error);
     });
 }
+
 
 
 // 使用事件委托监听 .bi-cart-fill 元素的点击事件
@@ -421,25 +428,34 @@ document.body.addEventListener('click', function(event) {
 //     }
 // });
 
-function payAllHandler() {
-    console.log('Pay All button clicked');
-    // 假设 totalPriceElement 包含了购物车的总价
-    const totalPriceElement = document.getElementById('totalPrice');
-    const totalPriceText = totalPriceElement.textContent || totalPriceElement.innerText;
-    const totalPrice = totalPriceText.replace('Total Price: £', '');
 
-    // 这里使用了 `checkWalletAndRedirect` 函数来检查钱包余额并可能重定向到支付页面
-    // 确保这个函数定义了并且可用
-    checkWalletAndRedirect(totalPrice, ''); // 如果 itemid 不重要，可以传空字符串或适当的值
-}
+// document.addEventListener('DOMContentLoaded', (event) => {
+//     const payAllButton = document.getElementById('payAll');
+//     if (payAllButton) {
+//         payAllButton.addEventListener('click', function() {
+//             const totalPriceElement = document.getElementById('totalPrice');
+//             const totalPrice = totalPriceElement.textContent.replace('Total Price: £', '');
+//             window.location.href = `/addressPage/?price=${totalPrice}`;
+//         });
+//     }
+// });
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const payAllButton = document.getElementById('payAll');
     if (payAllButton) {
         payAllButton.addEventListener('click', function() {
-            const totalPriceElement = document.getElementById('totalPrice');
-            const totalPrice = totalPriceElement.textContent.replace('Total Price: £', '');
-            window.location.href = `/addressPage/?price=${totalPrice}`;
+            const itemIds = Array.from(document.querySelectorAll('input[name="item_id[]"]')).map(input => input.value);
+            const quantities = Array.from(document.querySelectorAll('input[name="quantity[]"]')).map(input => input.value);
+            const prices = Array.from(document.querySelectorAll('input[name="price[]"]')).map(input => input.value);
+
+            const searchParams = new URLSearchParams();
+            itemIds.forEach((id, index) => {
+                searchParams.append(`items[${index}][itemid]`, id);
+                searchParams.append(`items[${index}][quantity]`, quantities[index]);
+                searchParams.append(`items[${index}][price]`, prices[index]);
+            });
+
+            window.location.href = `/addressPage/?${searchParams.toString()}`;
         });
     }
 });
@@ -489,7 +505,16 @@ function searchItem() {
 
 
 function checkWalletAndRedirect(price, itemid) {
-    const updatedPrice = document.getElementById(`price_${itemid}`).innerText.replace('Price: £', '')
+    const quantity = document.getElementById(`quantity_${itemid}`).value; // 获取数量
+
+    // 构造查询字符串
+    const searchParams = new URLSearchParams({
+        'items[0][itemid]': itemid,
+        'items[0][quantity]': quantity,
+        'items[0][price]': price,
+    });
+
+    // 发起请求检查钱包余额
     fetch(`/checkWallet/?price=${price}`, {
         method: 'GET',
         headers: {
@@ -499,9 +524,10 @@ function checkWalletAndRedirect(price, itemid) {
     .then(response => response.json())
     .then(data => {
         if (data.can_afford) {
-            window.location.href = `/addressPage/?price=${updatedPrice}`;
+            // 如果可以支付，重定向到地址页面，并带上商品信息
+            window.location.href = `/addressPage/?${searchParams.toString()}`;
         } else {
-            alert(data.error);  // 显示错误信息
+            alert(data.error); // 显示错误信息
         }
     })
     .catch(error => {
@@ -509,8 +535,19 @@ function checkWalletAndRedirect(price, itemid) {
     });
 }
 
+
+
+
+// 在JavaScript中获取items_data并添加到请求中
 function payTheBill() {
+    // const formData = new FormData(document.getElementById('addressForm'));
+    // // 确保hiddenItemsData中包含了有效的JSON
+    // const itemsDataStr = document.getElementById('itemsData').value;
+    // console.log("Submitting items_data:", itemsDataStr);
+    // console.log("Submitting items_data:", itemsData);
     const formData = new FormData(document.getElementById('addressForm'));
+    formData.append('items_data', JSON.stringify(itemsData)); // 将 itemsData 转换回 JSON 字符串并添加到表单数据中
+
     fetch('/payTheBill/', {
         method: 'POST',
         body: formData,
@@ -530,3 +567,6 @@ function payTheBill() {
         console.error('Error:', error);
     });
 }
+
+
+

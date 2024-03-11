@@ -44,15 +44,29 @@
         <div class="d-flex justify-content-center align-items-center">
             <div class="card shadow-lg p-4 bg-white rounded-4" style="width: 40rem;">
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">LOGIN</h2>
-                    <p id="itemPrice">Price: £${price}</p>
+                    <h2 class="card-title text-center mb-4">ENTER YOUR ADDRESS</h2>
+                    <p id="itemPrice">Price: £{{ total_price }}</p>
+                    {% if items %}
+                        <div id="itemsDataOutput">
+                            <ul>
+                                {% for item in items %}
+                                    <li>Item ID: {{ item.itemid }}, Quantity: {{ item.quantity }}, Price: £{{ item.price }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
                     <form id="addressForm">
-                        <input type="hidden" name="price" id="hiddenPrice" value="">
-                        <input type="text" name="name" placeholder="Name" required>
-                        <input type="text" name="address1" placeholder="Address 1" required>
-                        <input type="text" name="address2" placeholder="Address 2">
-                        <input type="text" name="address3" placeholder="Address 3">
-                        <input type="text" name="zipcode" placeholder="Zip Code" required>
+
+{#                        <input type="hidden" name="items_data" id="hiddenItemsData" value="{{ items_data_json | safe }}">#}
+{#                        <input type="hidden" name="price" id="hiddenPrice" value="">#}
+{#                        <!-- 在address.html中的form添加隐藏字段 -->#}
+{#                        <input type="hidden" name="itemid" id="hiddenItemId" value="">#}
+{#                        <input type="hidden" name="quantity" id="hiddenQuantity" value="">#}
+                        <input type="text" name="name" placeholder="Name (needed)" required>
+                        <input type="text" name="address1" placeholder="Address 1 (needed)" required>
+                        <input type="text" name="address2" placeholder="Address 2 (optional)">
+                        <input type="text" name="address3" placeholder="Address 3 (optional)">
+                        <input type="text" name="zipcode" placeholder="Zip Code (needed)" required>
                         <button type="button" onclick="payTheBill()" id="pay">Pay</button>
                         <button type="button" onclick="window.location.href='/home/'">Cancel</button>
                     </form>
@@ -71,16 +85,26 @@
     <script type="text/javascript">
         var csrftoken = '{{ csrf_token }}';
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const urlParams = new URLSearchParams(window.location.search)
-            const price = urlParams.get('price');
-
-            if (price) {
-                document.getElementById('itemPrice').innerText = `Price: £${price}`;
-                document.getElementById('hiddenPrice').value = price;
-            }
-        });
+    <script type="text/javascript">
+        var itemsData = {{ items_data_json | safe }};
     </script>
+
+
+{#    <script>#}
+{#        document.addEventListener('DOMContentLoaded', (event) => {#}
+{#            const urlParams = new URLSearchParams(window.location.search)#}
+{#            const price = urlParams.get('price');#}
+{#            const quantity = urlParams.get('quantity');#}
+{#            const itemid = urlParams.get('itemid'); // 确保传递了itemid#}
+{#            const items_data = JSON.parse('{{ items | safe }}');#}
+{##}
+{#            if (price) {#}
+{#                document.getElementById('itemPrice').innerText = `Price: £${price}`;#}
+{#                document.getElementById('hiddenPrice').value = price;#}
+{#                document.getElementById('hiddenQuantity').value = quantity || '1'; // 默认值为1#}
+{#                document.getElementById('hiddenItemId').value = itemid;#}
+{#            }#}
+{#        });#}
+{#    </script>#}
 </body>
 </html>

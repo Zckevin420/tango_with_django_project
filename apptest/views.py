@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -25,7 +25,7 @@ def login(request):
 
         user = authenticate(request, email=email, password=password)
         #print(user)
-        if user:
+        if user is not None and user:
             #print("user exists")
 
             auth_login(request, user)
@@ -35,8 +35,10 @@ def login(request):
                 return redirect(manager)
         else:
             #print("user does not exist")
-            messages.error(request, "wrong password or email")
-            return redirect(login)
+            # messages.error(request, "wrong password or email")
+            # return redirect(login)
+            messages.error(request, "Wrong password or email")
+            return render(request, 'loginPage.html', {})
 
     return render(request, 'loginPage.html', {})
 
@@ -49,48 +51,22 @@ def register(request):
         try:
             user = Users.objects.get(email=email)
             if user:
-                msg = "User already exists"
-                return render(request, 'registerPage.html', {'msg':msg})
+                messages.error(request, "User already exists")
+                return redirect(register)  # 假设'register'是注册页面的URL名称
+                # msg = "User already exists"
+                # return render(request, 'registerPage.html', {'msg':msg})
         except:
             if password != password2:
-                msg = "different passwords"
-                return render(request, 'registerPage.html', {'msg':msg})
+                messages.error(request, "Different passwords")
+                return redirect(register)
+                # msg = "different passwords"
+                # return render(request, 'registerPage.html', {'msg':msg})
             else:
                 Users.objects.create_user(
                     username=username, email=email, password=password)
                 return redirect(registerSuccess)
-        # form = UserCreationForm(request.POST)
-        # isexist = Users.objects.filter(email=request.POST.get('email'))
-        # if isexist:
-        #     messages.error(request, 'email already exists')
-        #     return render(request, 'registerPage.html', {'error': messages.error})
-        # elif (request.POST['password1'] != request.POST['password2']):
-        #     messages.error(
-        #         request, 'password confirmation doesn\'t match please try again')
-        #     return render(request, 'registerPage.html', {'error': messages.error})
-        #
-        # if form.is_valid():
-        #     print("valid")
-        #     suusername = request.POST.get('username')
-        #     supassword = request.POST.get('password1')
-        #     suemail = request.POST.get('email')
-        #
-        #     Users.objects.create(
-        #         username=suusername, email=suemail, password=supassword)
-        #
-        #     user = Users.objects.create_user(
-        #         username=suusername, password=supassword, email=suemail)
-        #     user.save()
-        #     messages.success(request, 'Now you have an account, try to login!!!')
-        #     return redirect('login')
-        # else:
-        #     print("invalid")
-        #     return render(request, 'registerPage.html', {'form': form})
-
     else:
         form = UserRegisterForm()
-        messages.error(
-            request, 'Unknown Error....')
         return render(request, 'registerPage.html', {'form': form})
 
 # def login(request):
@@ -392,36 +368,36 @@ def removeFromCart(request, itemid):
 #
 
 
-@login_required
-def payCart(request):
-    if request.method == 'POST':
-        user = request.user
-        cart_items = CartItem.objects.filter(cart__user=user).select_related('item')
-        total_price = sum(item.quantity * item.item.price for item in cart_items)
-
-        # 检查库存
-        out_of_stock_items = [
-            item for item in cart_items if item.quantity > item.item.quantity
-        ]
-        if out_of_stock_items:
-            return JsonResponse({'error': 'Out of stock'}, status=400)
-
-        # 检查钱包余额
-        if user.wallet < total_price:
-            return JsonResponse({'error': 'Insufficient funds'}, status=400)
-
-        # 扣款并更新库存
-        user.wallet -= total_price
-        user.save()
-        for item in cart_items:
-            product = Items.objects.get(itemid=item.item.itemid)
-            product.quantity -= item.quantity
-            product.save()
-            item.delete()  # Optionally remove the item from the cart after purchase
-
-        return JsonResponse({'success': 'Payment completed successfully'})
-    else:
-        return JsonResponse({'error': 'invalid request'}, status=400)
+# @login_required
+# def payCart(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         cart_items = CartItem.objects.filter(cart__user=user).select_related('item')
+#         total_price = sum(item.quantity * item.item.price for item in cart_items)
+#
+#         # 检查库存
+#         out_of_stock_items = [
+#             item for item in cart_items if item.quantity > item.item.quantity
+#         ]
+#         if out_of_stock_items:
+#             return JsonResponse({'error': 'Out of stock'}, status=400)
+#
+#         # 检查钱包余额
+#         if user.wallet < total_price:
+#             return JsonResponse({'error': 'Insufficient funds'}, status=400)
+#
+#         # 扣款并更新库存
+#         user.wallet -= total_price
+#         user.save()
+#         for item in cart_items:
+#             product = Items.objects.get(itemid=item.item.itemid)
+#             product.quantity -= item.quantity
+#             product.save()
+#             item.delete()  # Optionally remove the item from the cart after purchase
+#
+#         return JsonResponse({'success': 'Payment completed successfully'})
+#     else:
+#         return JsonResponse({'error': 'invalid request'}, status=400)
 
 
 @login_required
@@ -447,33 +423,60 @@ def checkWallet(request):
 
 @login_required
 def addressPage(request):
-    price = request.GET.get('price', '0')
+    items_data = []
+    total_price = 0
+    for key in request.GET.keys():
+        if key.startswith('items[') and 'itemid' in key:
+            index = key.split('[')[1].split(']')[0]
+            itemid = request.GET[key]
+            quantity = request.GET.get(f'items[{index}][quantity]', 0)
+            price = request.GET.get(f'items[{index}][price]', '0')
+            total_price += Decimal(price) * int(quantity)  # 累加每个物品的价格乘以数量
+            items_data.append({'itemid': itemid, 'quantity': quantity, 'price': price})
+    items_data_json = json.dumps(items_data)
+    # print(items_data)
     context = {
-        'price': price,
+        'items': items_data,
+        'items_data_json': items_data_json,  # JSON字符串，用于隐藏字段
+        'total_price': total_price,
         'username': request.user.username,
-        'wallet': request.user.wallet,  # 假设 wallet 是用户模型的一个属性
+        'wallet': request.user.wallet,
     }
     return render(request, 'address.html', context)
 
+
 @login_required
 def payTheBill(request):
-    # print("in the payTheBill function")
     if request.method == 'POST':
-        # print('in the payTheBill function POST')
         user = request.user
-        price = Decimal(request.POST.get('price', '0'))
-        # print(price)
+        try:
+            items_data = json.loads(request.POST.get('items_data', '[]'))
+            # print(items_data)
+            total_price = Decimal('0.00')
+            for item_data in items_data:
+                itemid = item_data['itemid']
+                quantity = int(item_data['quantity'])
+                price = Decimal(item_data['price'])
 
+                item = get_object_or_404(Items, pk=itemid)
+                if item.quantity >= quantity:
+                    item.quantity -= quantity  # 减去库存
+                    item.save()
+                    total_price += price * quantity
+                else:
+                    return JsonResponse({'error': f'Not enough stock for item {itemid}'}, status=400)
+            # print(total_price)
+            if user.wallet >= total_price:
+                user.wallet -= total_price  # 更新用户钱包
+                user.save()
+                return JsonResponse({'success': 'Payment successful'})
+            else:
+                return JsonResponse({'error': 'Not enough money'}, status=400)
 
-        if user.wallet >= price:
-            # print('in the payTheBill function POST wallet > price')
-            user.wallet -= price
-            user.save()
-            return JsonResponse({'success': 'Payment completed successfully'})
-        else:
-            return JsonResponse({'error': 'Not enough money'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
     else:
-        return JsonResponse({'error': 'invalid'})
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # @login_required
 # def payDirect(request):

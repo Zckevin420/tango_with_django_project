@@ -107,8 +107,8 @@
         </div>
         <div class="table-responsive">
             <div>
-                <input type="text" id="userSearchBox" placeholder="Search by email...">
-                <button onclick="searchUser()">Search</button>
+                <input type="text" class="rounded-5" id="userSearchBox" placeholder="Search by email...">
+                <button class="btn btn-primary" onclick="searchUser()">Search</button>
             </div>
             <table class="table" id="userstable">
                 <thead>
@@ -123,10 +123,10 @@
                 <tbody>
                     {% for user in users %}
                     <tr>
-                        <td style="color: white">{{ user.userid }}</td>
-                        <td style="color: white">{{ user.username }}</td>
-                        <td style="color: white">{{ user.email }}</td>
-                        <td style="color: white">{{ user.last_login }}</td>
+                        <td style="color: white">{{ user.userid|truncatechars:20 }}</td>
+                        <td style="color: white">{{ user.username|truncatechars:20 }}</td>
+                        <td style="color: white">{{ user.email|truncatechars:20 }}</td>
+                        <td style="color: white">{{ user.last_login|truncatechars:20 }}</td>
                         <td>
                       <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
                             <a href="javascript:void(0);" onclick="confirmDelete('{{ user.userid }}');" class="btn btn-danger">Delete</a>
@@ -160,8 +160,8 @@
         </div>
         <div class="table-responsive">
             <div>
-                <input type="text" id="itemSearchBox" placeholder="Search by item name...">
-                <button onclick="searchItem()">Search</button>
+                <input type="text" class="rounded-5" id="itemSearchBox" placeholder="Search by item name...">
+                <button class="btn btn-primary" onclick="searchItem()">Search</button>
             </div>
             <table class="table" id="itemstable">
                 <thead>
