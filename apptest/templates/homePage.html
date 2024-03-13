@@ -29,7 +29,7 @@
                                 <form id="topUpForm">
                                     {% csrf_token %}
                                     <label for="money">Amount of money</label>
-                                    <input type="number" class="form-control" id="money" name="money" step="0.01" required>
+                                    <input type="number" class="form-control" id="money" name="money" step="0.01" min="0" required>
                                 </form>
                             </div>
                             <div class="modal-footer">
