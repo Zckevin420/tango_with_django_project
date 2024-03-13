@@ -32,7 +32,7 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                                 <button type="button" class="btn btn-primary" onclick="submitTopUpForm()">Save</button>
                             </div>
                         </div>
@@ -67,8 +67,8 @@
                         <input type="text" name="address2" placeholder="Address 2 (optional)">
                         <input type="text" name="address3" placeholder="Address 3 (optional)">
                         <input type="text" name="zipcode" placeholder="Zip Code (needed)" required>
-                        <button type="button" onclick="payTheBill()" id="pay">Pay</button>
-                        <button type="button" onclick="window.location.href='/home/'">Cancel</button>
+                        <button type="button" class="btn btn-success" onclick="payTheBill()" id="pay">Pay</button>
+                        <button type="button" class="btn btn-success" onclick="window.location.href='/home/'">Cancel</button>
                     </form>
                 </div>
             </div>

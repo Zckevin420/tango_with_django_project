@@ -142,17 +142,17 @@
                             <div>
                                 <label for="username">Username: </label>
                                 <input type="text" id="modal_username" name="username" value="{{ user.username }}" disabled>
-                                <button type="button" onclick="enableInput('modal_username')">Edit</button>
+                                <button type="button" class="btn btn-success" onclick="enableInput('modal_username')">Edit</button>
                             </div>
 
                             <div>
                                 <label for="email">Email:</label>
                                 <input type="email" id="modal_email" name="email" value="{{ user.email }}" disabled>
-                                <button type="button" onclick="enableInput('modal_email')">Edit</button>
+                                <button type="button" class="btn btn-success" onclick="enableInput('modal_email')">Edit</button>
                             </div>
 
-                            <button type="button" onclick="enableInputAndSubmitUser()">Save</button>
-                            <button type="button" onclick="closeModal()">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="enableInputAndSubmitUser()">Save</button>
+                            <button type="button" class="btn btn-danger" onclick="closeModal()">Cancel</button>
                         </form>
                     </div>
                 </tbody>
@@ -195,23 +195,23 @@
                             <div>
                                 <label for="itemname">Item name:</label>
                                 <input type="text" id="modal_itemname" name="itemname" value="{{ item.itemname }}" disabled>
-                                <button type="button" onclick="enableInput('modal_itemname')">Edit</button>
+                                <button type="button" class="btn btn-success" onclick="enableInput('modal_itemname')">Edit</button>
                             </div>
 
                             <div>
                                 <label for="price">Price:</label>
                                 <input type="text" id="modal_price" name="price" value="{{ item.price }}" disabled>
-                                <button type="button" onclick="enableInput('modal_price')">Edit</button>
+                                <button type="button" class="btn btn-success" onclick="enableInput('modal_price')">Edit</button>
                             </div>
 
                             <div>
                                 <label for="quantity">Quantity:</label>
                                 <input type="text" id="modal_quantity" name="quantity" value="{{ item.quantity }}" disabled>
-                                <button type="button" onclick="enableInput('modal_quantity')">Edit</button>
+                                <button type="button" class="btn btn-success" onclick="enableInput('modal_quantity')">Edit</button>
                             </div>
 
-                            <button type="button" onclick="enableInputAndSubmitItem()">Save</button>
-                            <button type="button" onclick="closeItem()">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="enableInputAndSubmitItem()">Save</button>
+                            <button type="button" class="btn btn-danger" onclick="closeItem()">Cancel</button>
                         </form>
                     </div>
                 </tbody>
@@ -269,14 +269,16 @@
                             <div>
                                 <label><span id="m-paytime"></span></label>
                             </div>
-                            <button type="button" onclick="closeOrder()">Cancel</button>
+                            <button type="button" class="btn btn-danger" onclick="closeOrder()">Cancel</button>
                         </form>
                     </div>
                 </tbody>
             </table>
         </div>
-        <button onclick="changeTable('prev')">Next Table</button>
-        <button onclick="changeTable('next')">Prev Table</button>
+        <div class="np-button">
+            <button class="btn btn-warning" onclick="changeTable('prev')">Next Table</button>
+            <button class="btn btn-warning" onclick="changeTable('next')">Prev Table</button>
+        </div>
     </div>
 
     <footer class="footer mt-5 py-3 bg-white">
