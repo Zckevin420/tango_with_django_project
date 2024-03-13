@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.conf import settings
@@ -82,6 +84,18 @@ class CartItem(models.Model):
     def get_total_price(self):
         return self.quantity * self.item.price
 
+
+class Orders(models.Model):
+    orderid = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=254)
+    itemname = models.TextField(default='')
+    quantity = models.PositiveIntegerField(default=1)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'orders'
 
 
 

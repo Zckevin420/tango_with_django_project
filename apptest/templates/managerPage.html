@@ -37,13 +37,13 @@
                                     {% csrf_token %}
                                     <div>
                                         <label for="username">Username: </label>
-                                        <input type="text" id="modal_username" name="username" value="{{ request.user.username }}" disabled>
-                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_username')">Edit</button>
+                                        <input type="text" id="modal_username_header" name="username" value="{{ request.user.username }}" disabled>
+                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_username_header')">Edit</button>
                                     </div>
                                     <div>
                                         <label for="email">Email:</label>
-                                        <input type="email" id="modal_email" name="email" value="{{ request.user.email }}" disabled>
-                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_email')">Edit</button>
+                                        <input type="email" id="modal_email_header" name="email" value="{{ request.user.email }}" disabled>
+                                        <button type="button" class="btn btn-primary" onclick="enableInput('modal_email_header')">Edit</button>
                                     </div>
                                     <div>
                                         <script type="text/javascript">
@@ -105,7 +105,7 @@
 
             <a href="{% url 'logout' %}" class="bi bi-box-arrow-left">Logout</a>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" id="table1">
             <div>
                 <input type="text" class="rounded-5" id="userSearchBox" placeholder="Search by email...">
                 <button class="btn btn-primary" onclick="searchUser()">Search</button>
@@ -158,7 +158,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" id="table2" style="display: none;">
             <div>
                 <input type="text" class="rounded-5" id="itemSearchBox" placeholder="Search by item name...">
                 <button class="btn btn-primary" onclick="searchItem()">Search</button>
@@ -217,6 +217,61 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="table-responsive" id="table3" style="display: none;">
+            <div>
+                <input type="text" class="rounded-5" id="orderSearchBox" placeholder="Search by email...">
+                <button class="btn btn-primary" onclick="searchOrder()">Search</button>
+            </div>
+            <table class="table" id="orderstable">
+                <thead>
+                    <tr>
+                        <th scope="col" style="color: white">User email</th>
+                        <th scope="col" style="color: white">Item name</th>
+                        <th scope="col" style="color: white">Quantity</th>
+                        <th scope="col" style="color: white">Total price</th>
+                        <th scope="col" style="color: white">Operator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td style="color: white">{{ order.email|truncatechars:20 }}</td>
+                        <td style="color: white">{{ order.itemname|truncatechars:20 }}</td>
+                        <td style="color: white">{{ order.quantity|truncatechars:20 }}</td>
+                        <td style="color: white">{{ order.total_price|truncatechars:20 }}</td>
+                        <td>
+                      <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
+{#                            <a href="javascript:void(0);" onclick="confirmDelete('{{ user.userid }}');" class="btn btn-danger">Delete</a>#}
+{#                            <a href="javascript:void(0);" onclick="openOrder();" class="btn btn-primary">View</a>#}
+
+                            <a href="javascript:void(0);" onclick="openOrder('{{ order.email }}', '{{ order.itemname }}', '{{ order.quantity }}', '{{ order.total_price }}');" class="btn btn-primary">View</a>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <div id="orderModal" style="display: none;">
+                        <form>
+                            <div>
+                                <label><span id="m-email"></span></label>
+                            </div>
+                            <div>
+                                <label><span id="m-itemname"></span></label>
+                            </div>
+                            <div>
+                                <label><span id="m-quantity"></span></label>
+                            </div>
+                            <div>
+                                <label><span id="modal_totalprice"></span></label>
+                            </div>
+                            <button type="button" onclick="closeOrder()">Cancel</button>
+                        </form>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+        <button onclick="changeTable('prev')">Next Table</button>
+        <button onclick="changeTable('next')">Prev Table</button>
     </div>
 
     <footer class="footer mt-5 py-3 bg-white">
@@ -230,6 +285,28 @@
     <script src="{% static 'js/my.js' %}"></script>
     <script type="text/javascript">
         var csrftoken = '{{ csrf_token }}';
+    </script>
+    <script>
+        var currentTable = 1; // 当前显示的表格
+        var totalTables = 3; // 总表格数
+
+        function changeTable(direction) {
+            // 隐藏当前表格
+            document.getElementById('table' + currentTable).style.display = 'none';
+
+            // 更新当前表格编号
+            if (direction === 'next') {
+                currentTable = currentTable >= totalTables ? 1 : currentTable + 1;
+            } else {
+                currentTable = currentTable <= 1 ? totalTables : currentTable - 1;
+            }
+
+            // 显示新的当前表格
+            document.getElementById('table' + currentTable).style.display = '';
+        }
+
+        // 初始化显示第一个表格
+        document.getElementById('table1').style.display = '';
     </script>
 </body>
 </html>

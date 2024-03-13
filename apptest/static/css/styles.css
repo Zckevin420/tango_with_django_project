@@ -162,12 +162,29 @@ span {
     align-items: center;
 }
 
+/*.table-responsive {*/
+/*    display: block;*/
+/*    width: 70%; !* Set the width to 70% of the page *!*/
+/*    max-height: 900px;*/
+/*    overflow-y: auto;*/
+/*    overflow-x: hidden;*/
+/*    border: none; !* Remove the border *!*/
+/*    -webkit-overflow-scrolling: touch;*/
+/*    margin-top: 10px;*/
+/*    margin-left: auto; !* Center the table horizontally *!*/
+/*    margin-right: auto; !* Center the table horizontally *!*/
+/*    border-radius: 0.4rem !important;*/
+/*}*/
+
+.table-responsive {
+    width: 80%; /* 或其他所需的百分比 */
+    /* ...其他样式... */
+}
+
+
 .table {
-    flex: 2;
-    width: 40%;
+    width: 100%; /* 使表格填满容器 */
     margin-bottom: 1rem;
-    margin-left: 20px; /* 为表格添加左侧间隔 */
-    max-width: calc(100% - 220px); /* 减去按钮容器的宽度和间隔 */
     color: #212529;
 }
 
@@ -177,10 +194,6 @@ span {
     vertical-align: top;
     border-top: 1px solid #4d5154;
     white-space: nowrap;
-}
-
-.table-font {
-    color: white;
 }
 
 .table td {
@@ -194,21 +207,9 @@ span {
 .table thead th {
     position: sticky;
     top: 0;
-    background-color: #2b3035; /* 保持背景颜色 */
-    z-index: 10; /* 确保表头在内容之上 */
-    border-top: none; /* 如果您不希望在粘性头部看到顶部边框 */
-}
-
-.table-responsive {
-    display: block;
-    width: 38%;
-    max-height: 900px; /* 或者您希望的任何最大高度 */
-    overflow-y: auto; /* 启用垂直滚动 */
-    overflow-x: hidden; /* 隐藏水平滚动，如果您不需要 */
-    border: 1px solid #ddd; /* 添加框 */
-    -webkit-overflow-scrolling: touch; /* 为触摸设备增加滚动动力学 */
-    margin-top: 10px;
-    border-radius: 0.4rem !important;
+    background-color: #2b3035;
+    z-index: 10;
+    border-top: none;
 }
 
 #cartItemsContainer .card {

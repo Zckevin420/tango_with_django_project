@@ -95,14 +95,20 @@ def home(request):
 def manager(request):
     users = Users.objects.all()
     items = Items.objects.all()
+    orders = Orders.objects.all()
     user = request.user
     # print(user.username, user.wallet)
+    for order in orders:
+        print(
+            f"Order ID: {order.orderid}, User: {order.email}, Item: {order.itemname}, Quantity: {order.quantity}, Total Price: {order.total_price}")
+
     try:
         context = {
             'username': user.username,
             'wallet': user.wallet,
             'items': items,
             'users': users,
+            'orders': orders,
         }
     except Users.DoesNotExist:
         context = {
@@ -453,9 +459,12 @@ def payTheBill(request):
             items_data = json.loads(request.POST.get('items_data', '[]'))
             # print(items_data)
             total_price = Decimal('0.00')
+            total_quantity = 0
             for item_data in items_data:
                 itemid = item_data['itemid']
+                # quantity = int(item_data['quantity'])
                 quantity = int(item_data['quantity'])
+                total_quantity += quantity
                 price = Decimal(item_data['price'])
 
                 item = get_object_or_404(Items, pk=itemid)
@@ -469,6 +478,8 @@ def payTheBill(request):
             if user.wallet >= total_price:
                 user.wallet -= total_price  # 更新用户钱包
                 user.save()
+                order = Orders(user=user, email=user.email, quantity=total_quantity, total_price=total_price, itemname=itemid)
+                order.save()
                 return JsonResponse({'success': 'Payment successful'})
             else:
                 return JsonResponse({'error': 'Not enough money'}, status=400)

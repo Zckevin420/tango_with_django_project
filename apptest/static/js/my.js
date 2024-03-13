@@ -30,14 +30,8 @@ function showMessage(msgText) {
     setTimeout(closeMessage, datime);
 }
 
-function selectUser(element) {
-  // 移除之前选择的元素的类
-  document.querySelectorAll('.users-list li').forEach(li => {
-    li.classList.remove('selected');
-  });
-  // 为当前点击的元素添加类
-  element.classList.add('selected');
-}
+
+
 
 function confirmDelete(userid) {
     var baseUrl = "/deleteuser/";
@@ -65,16 +59,13 @@ function confirmDeleteItem(itemid) {
     }
 }
 
-function editUserProfile(userid) {
-
-}
-
 
 function openModal(userid, username, email) {
     document.getElementById("modal_userid").value = userid;
     document.getElementById("modal_username").value = username;
     document.getElementById("modal_email").value = email;
     document.getElementById("myModal").style.display = "block";
+    console.log(document.getElementById("modal_userid").value)
 }
 
 function openItem(itemid, itemname, price, quantity) {
@@ -85,17 +76,39 @@ function openItem(itemid, itemname, price, quantity) {
     document.getElementById("itemModal").style.display = "block";
 }
 
+function openOrder(orderEmail, itemName, quantity, totalPrice) {
+    // 设置模态框内容
+    document.getElementById('m-email').textContent = 'User Email: ' + orderEmail;
+    document.getElementById('m-itemname').textContent = 'Item ID: ' + itemName;
+    document.getElementById('m-quantity').textContent = 'Quantity: ' + quantity;
+    document.getElementById('modal_totalprice').textContent = 'Total Price: ' + totalPrice;
+
+    // 显示模态框
+    document.getElementById("orderModal").style.display = "block";
+}
+
+
 
 function closeModal() {
     document.getElementById("myModal").style.display = "none";
+}
+
+function closeOrder() {
+    document.getElementById("orderModal").style.display = "none";
 }
 
 function closeItem() {
     document.getElementById("itemModal").style.display = "none";
 }
 
+// function enableInput(inputId) {
+//     document.getElementById(inputId).disabled = false;
+// }
+
 function enableInput(inputId) {
-    document.getElementById(inputId).disabled = false;
+    const inputField = document.getElementById(inputId);
+    inputField.disabled = false;
+    inputField.removeAttribute('disabled'); // 从<form>标签中解除输入字段
 }
 
 function submitForm() {
@@ -465,6 +478,27 @@ function searchUser() {
     input = document.getElementById("userSearchBox");
     filter = input.value.toUpperCase();
     table = document.getElementById("userstable");
+    tr = table.getElementsByTagName("tr");
+
+    // 遍历所有表格行，隐藏不匹配的行
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2]; // 选择包含 email 的列
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
+function searchOrder() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("orderSearchBox");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("orderstable");
     tr = table.getElementsByTagName("tr");
 
     // 遍历所有表格行，隐藏不匹配的行
