@@ -44,32 +44,42 @@ def login(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)  # 使用表单来验证数据
-        if form.is_valid():
-            username = request.POST.get('username')
-            email = request.POST.get('suemail')
-            password = request.POST.get('password1')
-            password2 = request.POST.get('password2')
-            try:
-                user = Users.objects.get(email=email)
-                if user:
-                    messages.error(request, "User already exists")
-                    return redirect(register)  # 假设'register'是注册页面的URL名称
-                    # msg = "User already exists"
-                    # return render(request, 'registerPage.html', {'msg':msg})
-            except:
-                if password != password2:
-                    messages.error(request, "Different passwords")
-                    return redirect(register)
-                    # msg = "different passwords"
-                    # return render(request, 'registerPage.html', {'msg':msg})
-                else:
-                    Users.objects.create_user(
-                        username=username, email=email, password=password)
-                    return redirect(registerSuccess)
-        else:
-            messages.error(request, "Not a good password...")
-            return redirect(register)
+        # form = UserRegisterForm(request.POST)  # 使用表单来验证数据
+        # if form.is_valid():
+        username = request.POST.get('username')
+        email = request.POST.get('suemail')
+        password = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        try:
+            user = Users.objects.get(email=email)
+            if user:
+                messages.error(request, "User already exists")
+                return redirect(register)  # 假设'register'是注册页面的URL名称
+                # msg = "User already exists"
+                # return render(request, 'registerPage.html', {'msg':msg})
+        except:
+            if password != password2:
+                messages.error(request, "Different passwords")
+                return redirect(register)
+            # 自定义密码验证条件
+            if len(password) < 8:
+                messages.error(request, "Password must be at least 8 characters long.")
+                return redirect(register)
+
+            if password.isdigit() or password.isalpha() or password.islower() or password.isupper():
+                messages.error(request,
+                               "Password must include both letters and numbers, and mix of upper and lowercase letters.")
+                return redirect(register)
+
+                # msg = "different passwords"
+                # return render(request, 'registerPage.html', {'msg':msg})
+            else:
+                Users.objects.create_user(
+                    username=username, email=email, password=password)
+                return redirect(registerSuccess)
+        # else:
+        #     messages.error(request, "Not a good password...")
+        #     return redirect(register)
     else:
         form = UserRegisterForm()
         return render(request, 'registerPage.html', {'form': form})
