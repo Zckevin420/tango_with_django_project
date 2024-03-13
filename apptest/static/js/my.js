@@ -76,12 +76,13 @@ function openItem(itemid, itemname, price, quantity) {
     document.getElementById("itemModal").style.display = "block";
 }
 
-function openOrder(orderEmail, itemName, quantity, totalPrice) {
+function openOrder(orderEmail, itemName, quantity, totalPrice, payTime) {
     // 设置模态框内容
     document.getElementById('m-email').textContent = 'User Email: ' + orderEmail;
     document.getElementById('m-itemname').textContent = 'Item ID: ' + itemName;
     document.getElementById('m-quantity').textContent = 'Quantity: ' + quantity;
     document.getElementById('modal_totalprice').textContent = 'Total Price: ' + totalPrice;
+    document.getElementById('m-paytime').textContent = 'Pay time: ' + payTime;
 
     // 显示模态框
     document.getElementById("orderModal").style.display = "block";

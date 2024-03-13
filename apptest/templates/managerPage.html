@@ -230,6 +230,7 @@
                         <th scope="col" style="color: white">Item id</th>
                         <th scope="col" style="color: white">Quantity</th>
                         <th scope="col" style="color: white">Total price</th>
+                        <th scope="col" style="color: white">Pay time</th>
                         <th scope="col" style="color: white">Operator</th>
                     </tr>
                 </thead>
@@ -237,15 +238,16 @@
                     {% for order in orders %}
                     <tr>
                         <td style="color: white">{{ order.email|truncatechars:20 }}</td>
-                        <td style="color: white">{{ order.itemname|truncatechars:20 }}</td>
+                        <td style="color: white">{{ order.itemname|truncatechars:10 }}</td>
                         <td style="color: white">{{ order.quantity|truncatechars:20 }}</td>
                         <td style="color: white">{{ order.total_price|truncatechars:20 }}</td>
+                        <td style="color: white">{{ order.timestamp|truncatechars:40 }}</td>
                         <td>
                       <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
 {#                            <a href="javascript:void(0);" onclick="confirmDelete('{{ user.userid }}');" class="btn btn-danger">Delete</a>#}
 {#                            <a href="javascript:void(0);" onclick="openOrder();" class="btn btn-primary">View</a>#}
 
-                            <a href="javascript:void(0);" onclick="openOrder('{{ order.email }}', '{{ order.itemname }}', '{{ order.quantity }}', '{{ order.total_price }}');" class="btn btn-primary">View</a>
+                            <a href="javascript:void(0);" onclick="openOrder('{{ order.email }}', '{{ order.itemname }}', '{{ order.quantity }}', '{{ order.total_price }}', '{{ order.timestamp }}');" class="btn btn-primary">View</a>
 
                         </td>
                     </tr>
@@ -263,6 +265,9 @@
                             </div>
                             <div>
                                 <label><span id="modal_totalprice"></span></label>
+                            </div>
+                            <div>
+                                <label><span id="m-paytime"></span></label>
                             </div>
                             <button type="button" onclick="closeOrder()">Cancel</button>
                         </form>
