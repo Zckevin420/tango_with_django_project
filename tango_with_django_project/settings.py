@@ -25,7 +25,7 @@ SECRET_KEY = 'i+9q08p=apbq&1jjk@nwf3o((ah7k6xw*9gvngcq9%&h80f6u1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'apptest.Users'
 
