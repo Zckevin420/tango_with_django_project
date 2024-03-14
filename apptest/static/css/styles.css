@@ -135,7 +135,7 @@ span {
     flex-direction: row;
     width: 95%;
     margin: auto;
-    background: rgba(155, 155, 155, 0.9);
+    /*background: rgba(155, 155, 155, 0.9);*/
     align-items: flex-start;
 
 }
