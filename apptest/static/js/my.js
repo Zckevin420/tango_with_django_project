@@ -310,6 +310,8 @@ function updateItemsDisplay(items) {
                 <input type="number" class="form-control quantity-input" id="quantity_${item.itemid}" name="numofitem_${item.itemid}" 
                         step="1" value="1" min="1" required onchange="updatePrice(${item.itemid}, ${item.price})">
                 <button onclick="addToCart('${item.itemid}')" class="btn btn-primary">Add to Cart</button>
+                <button onclick="checkWalletAndRedirect(${ item.price }, '${ item.itemid }', this)"
+                                data-item-price="${ item.price }" class="btn btn-success">Pay Now</button>
             </div>
         </div>`;
         container.innerHTML += card;
