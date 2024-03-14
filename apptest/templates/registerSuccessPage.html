@@ -12,9 +12,22 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh hw5.css"
         crossorigin="anonymous">
-{#    <link rel="stylesheet" type="text/css" href="{% static 'rideshare/style.css' %">#}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            background-image: url('{% static "img/bg.jpg" %}');
+            /* Adjust background image properties as needed */
+            background-size: cover; /* Cover the entire container */
+            background-position: center; /* Center the background image */
+            background-repeat: no-repeat; /* Do not repeat the background image */
+            text-align: center; /* Center the text horizontally */
+            padding-top: 50px; /* Add some padding from the top */
+        }
 
+        h1 {
+            color: black; /* Set text color to black */
+        }
+    </style>
 </head>
 
 <body>
@@ -22,16 +35,17 @@
         SIGN UP SUCCESS! <span id="time">5</span>s move to login...
     </h1>
     <script>
-        onload=function () {
-            setInterval(go,1000)
+        onload = function () {
+            setInterval(go, 1000)
         };
-        var x=4;
+        var x = 4;
+
         function go() {
 
-            if (x>=0){
-                document.getElementById("time").innerText=x;
-            }else {
-                location.href="{% url 'login' %}";
+            if (x >= 0) {
+                document.getElementById("time").innerText = x;
+            } else {
+                location.href = "{% url 'login' %}";
             }
             x--;
         }
@@ -45,4 +59,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/my.js' %}"></script>
 </body>
+
 </html>

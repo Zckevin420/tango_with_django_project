@@ -57,11 +57,6 @@
                     {% endif %}
                     <form id="addressForm">
 
-{#                        <input type="hidden" name="items_data" id="hiddenItemsData" value="{{ items_data_json | safe }}">#}
-{#                        <input type="hidden" name="price" id="hiddenPrice" value="">#}
-{#                        <!-- 在address.html中的form添加隐藏字段 -->#}
-{#                        <input type="hidden" name="itemid" id="hiddenItemId" value="">#}
-{#                        <input type="hidden" name="quantity" id="hiddenQuantity" value="">#}
                         <input type="text" name="name" placeholder="Name (needed)" required>
                         <input type="text" name="address1" placeholder="Address 1 (needed)" required>
                         <input type="text" name="address2" placeholder="Address 2 (optional)">
@@ -89,22 +84,5 @@
         var itemsData = {{ items_data_json | safe }};
     </script>
 
-
-{#    <script>#}
-{#        document.addEventListener('DOMContentLoaded', (event) => {#}
-{#            const urlParams = new URLSearchParams(window.location.search)#}
-{#            const price = urlParams.get('price');#}
-{#            const quantity = urlParams.get('quantity');#}
-{#            const itemid = urlParams.get('itemid'); // 确保传递了itemid#}
-{#            const items_data = JSON.parse('{{ items | safe }}');#}
-{##}
-{#            if (price) {#}
-{#                document.getElementById('itemPrice').innerText = `Price: £${price}`;#}
-{#                document.getElementById('hiddenPrice').value = price;#}
-{#                document.getElementById('hiddenQuantity').value = quantity || '1'; // 默认值为1#}
-{#                document.getElementById('hiddenItemId').value = itemid;#}
-{#            }#}
-{#        });#}
-{#    </script>#}
 </body>
 </html>

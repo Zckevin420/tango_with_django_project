@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" href="{% static 'img/icon/icon.jpg' %}" type="image/x-icon">
+    <style>
+        body {
+            background-image: url('{% static "img/bg.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: transparent;
+        }
+    </style>
 </head>
 <body>
     <header class="p-3 bg-dark">
@@ -31,7 +40,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <!-- 表单 -->
+                                <!-- Form -->
                                 <form id="profileAndWalletForm">
                                     <!-- CSRF Token -->
                                     {% csrf_token %}
@@ -128,7 +137,7 @@
                         <td style="color: white">{{ user.email|truncatechars:20 }}</td>
                         <td style="color: white">{{ user.last_login|truncatechars:20 }}</td>
                         <td>
-                      <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
+                      <!-- Edit button and Delete button -->
                             <a href="javascript:void(0);" onclick="confirmDelete('{{ user.userid }}');" class="btn btn-danger">Delete</a>
                             <a href="javascript:void(0);" onclick="openModal('{{ user.userid }}', '{{ user.username }}', '{{ user.email }}');" class="btn btn-primary">Edit</a>
 
@@ -181,7 +190,7 @@
                         <td style="color: white">{{ item.price }}</td>
                         <td style="color: white">{{ item.quantity }}</td>
                         <td>
-                      <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
+                      <!-- Edit button and Delete button -->
                             <a href="javascript:void(0);" onclick="confirmDeleteItem('{{ item.itemid }}');" class="btn btn-danger">Delete</a>
                             <a href="javascript:void(0);" onclick="openItem('{{ item.itemid }}', '{{ item.itemname }}', '{{ item.price }}', '{{ item.quantity }}');" class="btn btn-primary">Edit</a>
 
@@ -243,9 +252,6 @@
                         <td style="color: white">{{ order.total_price|truncatechars:20 }}</td>
                         <td style="color: white">{{ order.timestamp|truncatechars:40 }}</td>
                         <td>
-                      <!-- 这里添加按钮或者链接来进行编辑和删除操作 -->
-{#                            <a href="javascript:void(0);" onclick="confirmDelete('{{ user.userid }}');" class="btn btn-danger">Delete</a>#}
-{#                            <a href="javascript:void(0);" onclick="openOrder();" class="btn btn-primary">View</a>#}
 
                             <a href="javascript:void(0);" onclick="openOrder('{{ order.email }}', '{{ order.itemname }}', '{{ order.quantity }}', '{{ order.total_price }}', '{{ order.timestamp }}');" class="btn btn-primary">View</a>
 
@@ -281,7 +287,7 @@
         </div>
     </div>
 
-    <footer class="footer mt-5 py-3 bg-white">
+    <footer class="footer mt-5 py-3">
         <div class="container text-center">
             <span class="text-muted">© Our Website Name</span>
         </div>
@@ -294,25 +300,25 @@
         var csrftoken = '{{ csrf_token }}';
     </script>
     <script>
-        var currentTable = 1; // 当前显示的表格
-        var totalTables = 3; // 总表格数
+        var currentTable = 1; // show current table
+        var totalTables = 3; // num of tables
 
         function changeTable(direction) {
-            // 隐藏当前表格
+            // hide table
             document.getElementById('table' + currentTable).style.display = 'none';
 
-            // 更新当前表格编号
+            // renew table + number
             if (direction === 'next') {
                 currentTable = currentTable >= totalTables ? 1 : currentTable + 1;
             } else {
                 currentTable = currentTable <= 1 ? totalTables : currentTable - 1;
             }
 
-            // 显示新的当前表格
+            // show the current table
             document.getElementById('table' + currentTable).style.display = '';
         }
 
-        // 初始化显示第一个表格
+        // initial the first table
         document.getElementById('table1').style.display = '';
     </script>
 </body>

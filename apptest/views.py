@@ -44,7 +44,7 @@ def login(request):
 
 def register(request):
     if request.method == 'POST':
-        # form = UserRegisterForm(request.POST)  # 使用表单来验证数据
+        # form = UserRegisterForm(request.POST)
         # if form.is_valid():
         username = request.POST.get('username')
         email = request.POST.get('suemail')
@@ -88,10 +88,8 @@ def register(request):
 #     return HttpResponse("Hello")
 @login_required
 def home(request):
-    # 假设你的用户模型是Users，并且你已经实现了用户认证
     user = request.user
     items = Items.objects.all()  # 或者您的查询
-    # print(items)  # 打印查询结果，看是否如预期
     # print(user.username, user.wallet)
     try:
         context = {
@@ -157,22 +155,17 @@ def updateUser(request, userid):
         email_exists = Users.objects.exclude(userid=userid).filter(email=email).exists()
 
         if username_exists or email_exists:
-            # 如果username或email已经存在，返回错误消息
             error_message = "Username or email already exists."
             return JsonResponse({'status': 'error', 'message': error_message})
         else:
-            # 如果username和email都是唯一的，更新用户信息
             user.username = username
             user.email = email
             user.save()
-            # 可以重定向到一个确认页面或者用户列表页面
-            return redirect('manager')  # 确保'manager'是你的URL名称
+            return redirect('manager')
 
     else:
-        # 如果请求方法不是POST，返回错误
         return JsonResponse({'status': 'error', 'message': 'wrong method'})
         # user.save()
-        # 重定向到某个页面，例如用户列表页面
         # return redirect(manager)
     # return JsonResponse({'status': 'error', 'message': 'wrong method'})
 
@@ -193,20 +186,16 @@ def updateItem(request, itemid):
         itemname_exists = Items.objects.exclude(itemid=itemid).filter(itemname=itemname).exists()
 
         if itemname_exists:
-            # 如果username或email已经存在，返回错误消息
             error_message = "Username already exists."
             return JsonResponse({'status': 'error', 'message': error_message})
         else:
-            # 如果username和email都是唯一的，更新用户信息
             item.itemname = itemname
             item.price = price
             item.quantity = quantity
             item.save()
-            # 可以重定向到一个确认页面或者用户列表页面
-            return redirect('manager')  # 确保'manager'是你的URL名称
+            return redirect('manager')
 
     else:
-        # 如果请求方法不是POST，返回错误
         return JsonResponse({'status': 'error', 'message': 'wrong method'})
 
 @login_required
@@ -215,7 +204,6 @@ def additem(request):
         itemname = request.POST.get('itemname')
         price = request.POST.get('price')
         quantity = request.POST.get('quantity')
-        # 创建并保存新项目
         item = Items(itemname=itemname, price=price, quantity=quantity)
         item.save()
         return JsonResponse({"message": "Item added successfully"}, status=200)
@@ -225,19 +213,16 @@ def additem(request):
 def updateProfileAndWallet(request):
     if request.method == 'POST':
         user = request.user
-        # 使用get方法从POST中获取username和email，如果不存在则使用当前值
         username = request.POST.get('username', user.username)
         email = request.POST.get('email', user.email)
 
-        # 更新用户名和邮箱
         user.username = username
         user.email = email
 
-        # 检查是否需要更新密码
         new_password = request.POST.get('new_password')
         if new_password:
             user.set_password(new_password)
-            update_session_auth_hash(request, user)  # 更新session以防用户被登出
+            update_session_auth_hash(request, user)
 
         user.save()
         return JsonResponse({"message": "Profile updated successfully"}, status=200)
@@ -330,7 +315,6 @@ def searchItem(request):
     if request.method == 'POST':
         search_keyword = request.POST.get('searchKeyword')
         # print(search_keyword)
-        # 根据关键词搜索 Items 模型
         if search_keyword:  # Ensure search_keyword is not None
             items = Items.objects.filter(itemname__icontains=search_keyword)
             items_data = list(items.values('itemid', 'itemname', 'price', 'quantity'))
@@ -365,11 +349,9 @@ def cartItems(request):
 
 @login_required
 def removeFromCart(request, itemid):
-    # 确保只处理POST请求
     if request.method == 'POST':
         user = request.user
         try:
-            # 根据当前用户和商品ID找到CartItem实例
             cart_item = CartItem.objects.get(cart__user=user, item__itemid=itemid)
             cart_item.delete()  # 删除该CartItem实例
             return JsonResponse({'success': 'Item removed successfully'})
@@ -452,13 +434,13 @@ def addressPage(request):
             itemid = request.GET[key]
             quantity = request.GET.get(f'items[{index}][quantity]', 0)
             price = request.GET.get(f'items[{index}][price]', '0')
-            total_price += Decimal(price) * int(quantity)  # 累加每个物品的价格乘以数量
+            total_price += Decimal(price) * int(quantity)
             items_data.append({'itemid': itemid, 'quantity': quantity, 'price': price})
     items_data_json = json.dumps(items_data)
     # print(items_data)
     context = {
         'items': items_data,
-        'items_data_json': items_data_json,  # JSON字符串，用于隐藏字段
+        'items_data_json': items_data_json,
         'total_price': total_price,
         'username': request.user.username,
         'wallet': request.user.wallet,
@@ -491,7 +473,7 @@ def payTheBill(request):
                     return JsonResponse({'error': f'Not enough stock for item {itemid}'}, status=400)
             # print(total_price)
             if user.wallet >= total_price:
-                user.wallet -= total_price  # 更新用户钱包
+                user.wallet -= total_price
                 user.save()
                 order = Orders(user=user, email=user.email, quantity=total_quantity, total_price=total_price, itemname=itemid)
                 order.save()

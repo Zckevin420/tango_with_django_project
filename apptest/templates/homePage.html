@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" href="{% static 'img/icon/icon.jpg' %}" type="image/x-icon">
     <script src="{% static 'js/my.js' %}"></script>
+    <style>
+        body {
+            background-image: url('{% static "img/bg.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
 </head>
 <body>
     <header class="p-3 bg-dark">
@@ -29,11 +37,11 @@
                                 <form id="topUpForm">
                                     {% csrf_token %}
                                     <label for="money">Amount of money</label>
-                                    <input type="number" class="form-control" id="money" name="money" step="0.01" min="0" required>
+                                    <input type="number" class="form-control" id="money" name="money" step="0.01" required>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
                                 <button type="button" class="btn btn-primary" onclick="submitTopUpForm()">Save</button>
                             </div>
                         </div>
@@ -55,7 +63,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <!-- 表单 -->
+                                    <!-- form -->
                                     <form id="profileAndWalletForm">
                                         <!-- CSRF Token -->
                                         {% csrf_token %}
@@ -129,7 +137,7 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
                                     <button type="button" class="btn btn-primary" onclick="submitSearchForm()">Search</button>
                                 </div>
                             </div>
@@ -139,7 +147,7 @@
             </div>
         </div>
         <div class="card-container">
-        <!-- 商品卡片 -->
+        <!-- card -->
             {% for item in items %}
                 {% csrf_token %}
                 <div class="card" style="width: 18rem; float: left; margin: 10px;">
@@ -161,7 +169,7 @@
         </div>
     </div>
 
-    <footer class="footer mt-5 py-3 bg-white">
+    <footer class="footer mt-5 py-3">
         <div class="container text-center">
             <span class="text-muted">© Our Website Name</span>
         </div>

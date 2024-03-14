@@ -184,10 +184,9 @@ function submitItemForm() {
     })
     .then(data => {
         // console.log('Success:', data);
-        // 关闭模态框
+        // close modal
         document.getElementById('addItemModal').style.display = 'none';
-        // 这里可以添加一些操作，如刷新页面或显示消息
-        window.location.reload(); // 刷新页面
+        window.location.reload(); // reload page
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -196,7 +195,7 @@ function submitItemForm() {
 
 function profileAndWalletForm() {
     const formData = new FormData(document.getElementById('profileAndWalletForm'));
-    fetch('/updateprofileandwallet/', { // 替换为实际更新视图的URL
+    fetch('/updateprofileandwallet/', {
         method: 'POST',
         body: formData,
         headers: {
@@ -211,7 +210,7 @@ function profileAndWalletForm() {
     })
     .then(data => {
         console.log('Success:', data);
-        window.location.reload(); // 刷新页面
+        window.location.reload();
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -223,15 +222,15 @@ function verifyOldPassword() {
     const oldPassword = document.getElementById('old_password').value;
     console.log(oldPassword);
 
-    // 创建一个 FormData 对象并添加旧密码
+    // Create FormData, object is old password
     const formData = new FormData();
     formData.append('old_password', oldPassword);
 
     fetch('/verifypassword/', {
         method: 'POST',
-        body: formData, // 发送 FormData 对象
+        body: formData,
         headers: {
-            'X-CSRFToken': csrftoken, // 确保你有获取 csrftoken 的逻辑
+            'X-CSRFToken': csrftoken,
         },
     })
     .then(response => response.json())
@@ -273,10 +272,10 @@ function submitTopUpForm() {
 }
 
 function submitSearchForm() {
-    // 获取用户输入的搜索关键词
+    // get search keyword
     const searchKeyword = document.getElementById('searchKeyword').value;
 
-    // 创建 FormData 对象
+    // create formdata
     const formData = new FormData();
     formData.append('searchKeyword', searchKeyword);
 
@@ -290,13 +289,10 @@ function submitSearchForm() {
     })
     .then(response => response.json())
     .then(data => {
-        // 处理搜索结果
         console.log('Search results:', data);
-        // 根据需要更新页面内容
         updateItemsDisplay(data.items);
-        // 关闭模态框
-        var modalElement = document.getElementById('searchItemModel'); // 确保这里的 ID 与您模态框的 ID 一致
-        var modalInstance = bootstrap.Modal.getInstance(modalElement); // 获取模态框实例
+        var modalElement = document.getElementById('searchItemModel');
+        var modalInstance = bootstrap.Modal.getInstance(modalElement);
         modalInstance.hide(); // 关闭模态框
     })
     .catch(error => console.error('Error:', error));
@@ -304,19 +300,16 @@ function submitSearchForm() {
 
 function updateItemsDisplay(items) {
     const container = document.querySelector('.card-container');
-    container.innerHTML = '';  // 清空现有的内容
+    container.innerHTML = '';
 
-    // 为每个搜索结果创建一个新的卡片并添加到容器中
     items.forEach(item => {
         const card = `<div class="card" style="width: 18rem; float: left; margin: 10px;">
             <div class="card-body">
                 <h5 class="card-title">${item.itemname}</h5>
                 <p class="card-text" id="price_${item.itemid}">Price: £${item.price}</p>
-<!--                <p class="card-text">Quantity: ${item.quantity}</p>-->
                 <input type="number" class="form-control quantity-input" id="quantity_${item.itemid}" name="numofitem_${item.itemid}" 
                         step="1" value="1" min="1" required onchange="updatePrice(${item.itemid}, ${item.price})">
                 <button onclick="addToCart('${item.itemid}')" class="btn btn-primary">Add to Cart</button>
-<!--                <a href="/direct_pay/${item.itemid}" class="btn btn-success" onclick="addToCart('{{ item.itemid }}')">Pay Now</a>-->
             </div>
         </div>`;
         container.innerHTML += card;
@@ -352,7 +345,6 @@ function addToCart(itemid) {
     });
 }
 
-// 定义一个函数来发送删除购物车商品的请求
 function removeFromCart(itemid) {
     fetch(`/removeFromCart/${itemid}/`, {
         method: 'POST',
@@ -362,7 +354,7 @@ function removeFromCart(itemid) {
     })
     .then(response => {
         if (response.ok) {
-            updateCartModal();  // 重新加载购物车模态框以显示最新状态
+            updateCartModal();  // reload to be the newest
         } else {
             alert('Failed to remove item from cart.');
         }
@@ -372,7 +364,6 @@ function removeFromCart(itemid) {
     });
 }
 
-// 更新购物车模态框的函数
 function updateCartModal() {
     console.log('Updating cart modal...');
     fetch('/cartItems/', {
@@ -384,11 +375,11 @@ function updateCartModal() {
     .then(response => response.json())
     .then(data => {
         const cartItemsContainer = document.getElementById('cartItemsContainer');
-        cartItemsContainer.innerHTML = ''; // 清除现有内容
+        cartItemsContainer.innerHTML = ''; // clear
         data.items.forEach(item => {
             // 创建卡片元素
             let card = document.createElement('div');
-            card.className = 'card mb-3'; // 使用 Bootstrap 的卡片类
+            card.className = 'card mb-3'; // use Bootstrap card
             card.innerHTML = `
                 <div class="card-body">
                     <h5 class="card-title">${item.itemname}</h5>
@@ -401,20 +392,17 @@ function updateCartModal() {
                     <input type="hidden" name="price[]" value="${item.price}">
                 </div>
             `;
-            // 将卡片添加到容器中
+            // add card in the container
             cartItemsContainer.appendChild(card);
-
-            // 使用 updatePrice 函数更新价格
             updatePrice(item.itemid, item.price);
         });
-        // 更新总价
+        // renew total prise
         document.getElementById('totalPrice').textContent = `Total Price: £${data.total_price.toFixed(2)}`;
 
-        // 给每个"Remove"按钮添加点击事件监听器
         document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', function() {
                 const itemId = this.getAttribute('data-itemid');
-                removeFromCart(itemId);  // 调用删除购物车商品的函数
+                removeFromCart(itemId);
             });
         });
     })
@@ -423,9 +411,6 @@ function updateCartModal() {
     });
 }
 
-
-
-// 使用事件委托监听 .bi-cart-fill 元素的点击事件
 document.body.addEventListener('click', function(event) {
     if (event.target.matches('.bi-cart-fill')) {
         updateCartModal();
@@ -481,7 +466,6 @@ function searchUser() {
     table = document.getElementById("userstable");
     tr = table.getElementsByTagName("tr");
 
-    // 遍历所有表格行，隐藏不匹配的行
     for (i = 0; i < tr.length; i++) {
         td = tr[i].getElementsByTagName("td")[2]; // 选择包含 email 的列
         if (td) {
@@ -502,7 +486,6 @@ function searchOrder() {
     table = document.getElementById("orderstable");
     tr = table.getElementsByTagName("tr");
 
-    // 遍历所有表格行，隐藏不匹配的行
     for (i = 0; i < tr.length; i++) {
         td = tr[i].getElementsByTagName("td")[2]; // 选择包含 email 的列
         if (td) {
@@ -517,14 +500,13 @@ function searchOrder() {
 }
 
 function searchItem() {
-    // 实现方法类似 searchUser()，但根据 itemname 进行过滤
+
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("itemSearchBox");
     filter = input.value.toUpperCase();
     table = document.getElementById("itemstable");
     tr = table.getElementsByTagName("tr");
 
-    // 遍历所有表格行，隐藏不匹配的行
     for (i = 0; i < tr.length; i++) {
         td = tr[i].getElementsByTagName("td")[1]; // 选择包含 email 的列
         if (td) {
@@ -540,16 +522,14 @@ function searchItem() {
 
 
 function checkWalletAndRedirect(price, itemid) {
-    const quantity = document.getElementById(`quantity_${itemid}`).value; // 获取数量
+    const quantity = document.getElementById(`quantity_${itemid}`).value;
 
-    // 构造查询字符串
     const searchParams = new URLSearchParams({
         'items[0][itemid]': itemid,
         'items[0][quantity]': quantity,
         'items[0][price]': price,
     });
 
-    // 发起请求检查钱包余额
     fetch(`/checkWallet/?price=${price}`, {
         method: 'GET',
         headers: {
@@ -559,10 +539,9 @@ function checkWalletAndRedirect(price, itemid) {
     .then(response => response.json())
     .then(data => {
         if (data.can_afford) {
-            // 如果可以支付，重定向到地址页面，并带上商品信息
             window.location.href = `/addressPage/?${searchParams.toString()}`;
         } else {
-            alert(data.error); // 显示错误信息
+            alert(data.error);
         }
     })
     .catch(error => {
@@ -573,15 +552,10 @@ function checkWalletAndRedirect(price, itemid) {
 
 
 
-// 在JavaScript中获取items_data并添加到请求中
 function payTheBill() {
-    // const formData = new FormData(document.getElementById('addressForm'));
-    // // 确保hiddenItemsData中包含了有效的JSON
-    // const itemsDataStr = document.getElementById('itemsData').value;
-    // console.log("Submitting items_data:", itemsDataStr);
-    // console.log("Submitting items_data:", itemsData);
+
     const formData = new FormData(document.getElementById('addressForm'));
-    formData.append('items_data', JSON.stringify(itemsData)); // 将 itemsData 转换回 JSON 字符串并添加到表单数据中
+    formData.append('items_data', JSON.stringify(itemsData)); // Convert itemsData back to a JSON string and add it to the form data
 
     fetch('/payTheBill/', {
         method: 'POST',
